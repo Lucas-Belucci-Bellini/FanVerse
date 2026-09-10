@@ -115,16 +115,26 @@ async function loadCatalog() {
   }
 
   try {
-    const response = await fetch('/data/catalogo.json', { cache: 'no-store' });
+    const response = await fetch('/api/catalogo', { cache: 'no-store' });
     if (!response.ok) {
-      throw new Error('Arquivo de catálogo não encontrado.');
+      throw new Error('API não disponível.');
     }
     const data = await response.json();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     return data;
   } catch {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(FALLBACK_CATALOG));
-    return FALLBACK_CATALOG;
+    try {
+      const response = await fetch('/data/catalogo.json', { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Arquivo de catálogo não encontrado.');
+      }
+      const data = await response.json();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return data;
+    } catch {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(FALLBACK_CATALOG));
+      return FALLBACK_CATALOG;
+    }
   }
 }
 
@@ -283,14 +293,48 @@ function ensureCollection(data, collectionTitle) {
 }
 
 /**
+ * Persiste o catálogo em duas camadas:
+ * 1) localStorage, para funcionamento imediato no navegador;
+ * 2) API JSON, para manter o arquivo de dados sincronizado sem mexer na lógica Java.
+ *
+ * @param {object} data catálogo atualizado
+ * @returns {Promise<object>} resposta da persistência
+ */
+async function persistCatalog(data) {
+  const normalized = JSON.parse(JSON.stringify(data));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+
+  try {
+    const response = await fetch('/api/catalogo', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(normalized),
+    });
+
+    if (!response.ok) {
+      throw new Error('API recusou a atualização do catálogo.');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.warn('Persistência local ativada: a API não respondeu.', error);
+    return { localOnly: true, message: 'Catálogo salvo localmente no navegador.' };
+  }
+}
+
+/**
  * Salva o catálogo atual no browser e redesenha a interface.
  *
  * @param {object} data catálogo atualizado
+ * @returns {Promise<void>}
  */
-function saveCatalog(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+async function saveCatalog(data) {
+  const result = await persistCatalog(data);
   app.innerHTML = buildCatalogView(data);
   bindEvents(data);
+  if (result?.localOnly) {
+    console.info('Dados persistidos apenas no navegador.');
+  }
 }
 
 /**
@@ -302,7 +346,7 @@ function bindEvents(data) {
   const form = document.querySelector('#catalog-form');
   const resetButton = document.querySelector('#reset-catalog');
 
-  form?.addEventListener('submit', (event) => {
+  form?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const title = document.querySelector('#book-title').value.trim();
@@ -333,15 +377,17 @@ function bindEvents(data) {
     };
 
     arc.books.push(newBook);
-    saveCatalog(data);
-    alert('Catálogo atualizado com sucesso no navegador.');
+    await saveCatalog(data);
+    alert('Catálogo atualizado com sucesso.');
   });
 
-  resetButton?.addEventListener('click', () => {
+  resetButton?.addEventListener('click', async () => {
     localStorage.removeItem(STORAGE_KEY);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(FALLBACK_CATALOG));
-    app.innerHTML = buildCatalogView(FALLBACK_CATALOG);
-    bindEvents(FALLBACK_CATALOG);
+    const resetData = JSON.parse(JSON.stringify(FALLBACK_CATALOG));
+    await persistCatalog(resetData);
+    app.innerHTML = buildCatalogView(resetData);
+    bindEvents(resetData);
+    alert('Catálogo resetado para o estado inicial seguro.');
   });
 }
 

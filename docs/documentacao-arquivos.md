@@ -172,60 +172,193 @@ Função:
 - cria objetos, demonstra polimorfismo e simula o uso completo do sistema;
 - serve como exemplo de execução e validação do domínio.
 
-## 5. Arquivos estáticos do site legado
+## 5. HTML e CSS por página
 
-Esses arquivos fazem parte da versão anterior do front-end estático, mas continuam como referência de estrutura e conteúdo.
+A estrutura visual do FanVerse é composta por páginas HTML semânticas e por um stylesheet compartilhado. Esse padrão facilita manutenção porque o conteúdo, a estrutura e o estilo ficam organizados em arquivos específicos.
+
+### [index.html](../index.html)
+Função:
+- arquivo principal do front-end Vite;
+- serve como ponto de entrada para rodar a aplicação moderna;
+- carrega o ambiente JavaScript e define o início da navegação.
+
+O que ele contém:
+- a tag `<head>` com meta tags, viewport e título da página;
+- a estrutura do `body` para a página inicial principal;
+- ligação com o bundle do Vite e o projeto web atual.
+
+Relação com o CSS:
+- o estilo geral é controlado por `src/style.css`;
+- os elementos visualmente principais são `header`, `main`, `section`, `hero`, `card` e `footer`.
 
 ### [site/index.html](../site/index.html)
-Função: página inicial do site legado.
+Função:
+- página inicial do site estático legado;
+- apresenta a identidade visual da FanVerse antes do sistema Vite;
+- organiza a navegação e destaque de livros/coleções.
+
+Estrutura principal:
+- `header.topbar`: barra superior com marca e navegação;
+- `section.hero`: introdução visual com chamada principal;
+- `section`: blocos de "Obras em destaque" e "Coleções mais recentes";
+- `footer`: rodapé com links úteis.
+
+Elementos importantes:
+- `#hero-book`: título da obra principal exibido dinamicamente;
+- `#featured-books`: área onde os livros em destaque são renderizados;
+- `#collection-cards`: cards de coleções da página inicial.
+
+CSS relacionado:
+- `.hero`, `.hero-grid`, `.hero-card`, `.card`, `.grid-3`, `.feature-strip`, `.topbar`.
 
 ### [site/catalogo.html](../site/catalogo.html)
-Função: página que exibe o catálogo.
+Função:
+- exibe o catálogo completo da FanVerse;
+- oferece filtros por tipo de obra e disponibilidade;
+- permite busca textual em títulos, arcos e coleções.
+
+Estrutura principal:
+- `header`: mantém a navegação uniforme em todas as páginas;
+- `main.container.section`: área central de catálogo;
+- `.catalog-tools`: barra com pesquisa e filtros;
+- `#catalog-list`: espaço de renderização dos cards de livros.
+
+Elementos chave:
+- `#catalog-search`: campo de busca;
+- `#tipo-filtro`: filtro por tipo digital/físico;
+- `#status-filtro`: filtro por disponibilidade do livro.
+
+CSS relacionado:
+- `.catalog-tools`, `.search-box`, `.filter-box`, `.grid-3`, `.card`, `.status`.
 
 ### [site/colecao.html](../site/colecao.html)
-Função: página de coleções e arcos.
+Função:
+- mostra uma coleção específica com capa, descrição e arcos;
+- organiza a narrativa em blocos de conteúdo por arc/parte.
+
+Estrutura principal:
+- `section.collection-hero`: capa + descrição + estatísticas;
+- `#collection-cover`: imagem da coleção;
+- `#arc-list`: lista de arcos e volumes relacionados.
+
+Elementos importantes:
+- `#collection-title`, `#collection-description`, `#collection-meta`;
+- `#arc-list` renderiza itens da coleção.
+
+CSS relacionado:
+- `.collection-hero`, `.collection-cover`, `.stats`, `.stat-box`, `.list-panel`, `.arc-item`.
 
 ### [site/livro.html](../site/livro.html)
-Função: página de detalhes do livro.
+Função:
+- apresenta os detalhes do livro selecionado;
+- mostra a capa, descrição, preço, disponibilidade e ações de compra/leitura.
+
+Estrutura principal:
+- `section.book-layout`: separa capa e informações do livro;
+- `#book-cover`: capa do título;
+- `#book-meta`: autor, tipo e detalhes do registro;
+- `#book-price`: preço exibido em destaque;
+- `#read-link` e `#buy-link`: ações de navegação e compra.
+
+CSS relacionado:
+- `.book-layout`, `.book-cover-box`, `.book-info`, `.price-box`, `.buy-actions`, `.status`.
 
 ### [site/leitor.html](../site/leitor.html)
-Função: ambiente de leitura do conteúdo.
+Função:
+- simula uma experiência de leitura digital;
+- contém painel de leitura com texto, títulos, controles de navegação e opções de visualização.
+
+Estrutura principal:
+- `.reader-shell`: contêiner central da tela de leitura;
+- `.reader-view`: caixa principal com estilo de página;
+- `.reader-toolbar`: barra superior de controles;
+- `.reader-body`: bloco de conteúdo e leitura;
+- `.chapter-nav`: navegação entre capítulos.
+
+Elementos importantes:
+- `#reader-title`, `#reader-subtitle`, `#reader-text`;
+- `#chapter-prev`, `#chapter-next`.
+
+CSS relacionado:
+- `.reader-shell`, `.reader-view`, `.reader-toolbar`, `.reader-controls`, `.icon-btn`, `.reader-body`, `.reader-text`, `.chapter-nav`.
 
 ### [site/loja.html](../site/loja.html)
-Função: página de compras e itens disponíveis.
+Função:
+- mostra produtos e livros disponíveis para compra;
+- centraliza itens do catálogo em um layout de loja.
+
+Estrutura principal:
+- cabeçalho padrão;
+- `main.container.section`;
+- `#shop-grid` para renderizar os produtos da loja.
+
+CSS relacionado:
+- `.shop-grid`, `.card`, `.price`, `.small-button`.
 
 ### [site/autor.html](../site/autor.html)
-Função: perfil do autor.
+Função:
+- exibe a biografia do autor e sua identidade no universo literário.
+
+Estrutura principal:
+- `.author-shell`: layout com foto e texto do autor;
+- `#author-photo`: imagem do autor;
+- `#author-name`, `#author-bio`: informações principais;
+- `.stat-box`: blocos de dados como localização e especialidade.
+
+CSS relacionado:
+- `.author-shell`, `.author-photo`, `.collection-details`, `.stat-box`.
 
 ### [site/assets/css/style.css](../site/assets/css/style.css)
-Função: estilos do site legado.
+Função:
+- folha de estilos compartilhada por todas as páginas estáticas do site;
+- define identidade visual, layout e responsividade do projeto.
+
+Blocos principais:
+- `:root`: variáveis de tema, cores, bordas, sombras e raios de borda;
+- `body`: base visual da página, incluindo fundo escuro e tipografia;
+- `.topbar`: barra de navegação fixada com efeito glass;
+- `.button` e `.button-secondary`: estilos de botões principais;
+- `.hero`: apresentação inicial com grande contraste visual;
+- `.card`: cards de livros/coleções;
+- `.collection-hero`, `.book-layout`, `.reader-shell`, `.author-shell`: layouts específicos;
+- `.catalog-tools`: área de pesquisa/filtro;
+- `@media (max-width: 920px)`: responsividade para telas menores.
+
+Observações:
+- esse arquivo é o núcleo da aparência do IP do projeto por páginas;
+- alterações aqui afetam todas as telas compartilhando o mesmo estilo;
+- por isso, mudanças visuais devem ser feitas com cuidado para não sobrescrever elementos entre telas.
 
 ### [site/assets/js/data.js](../site/assets/js/data.js)
-Função: dados iniciais do front-end estático.
+Função:
+- armazena os dados estruturados usados pelo front-end estático;
+- alimenta as páginas com informações de livros, coleções, autor e arcos.
+
+Relacionamento com HTML:
+- as páginas usam `id` específicos para receber conteúdo dinâmico;
+- o JavaScript consulta esse arquivo para montar os cards e os detalhes das obras.
 
 ### [site/assets/js/app.js](../site/assets/js/app.js)
-Função: lógica JS do site estático para renderização e navegação.
+Função:
+- controla a lógica da navegação e renderização da interface;
+- lê dados do `data.js` e povoar os elementos HTML de cada página;
+- permite alternar temas, montar cards, filtrar catálogo e abrir páginas relacionadas.
 
 ## 6. Observações de manutenção
 
 - O projeto foi estruturado para separar domínio e apresentação.
-- Alterações no catálogo da interface podem ocorrer sem mexer na lógica Java.
-- Os arquivos legados em `site/` servem como referência e não são a fonte principal da interface atual.
-- A principal base de construção atual é Vite + `src/main.js` + `src/style.css`.
+- O Java continua sendo a lógica de negócio, enquanto o HTML/CSS/JS controlam a experiência visual e interativa.
+- Os arquivos em `site/` são úteis como referência do front-end estático, mas a base atual de desenvolvimento é o frontend Vite em `src/`.
+- O CSS é compartilhado e precisa ser revisado com atenção para evitar sobrescrita de classes em páginas diferentes.
+- A documentação por arquivo reduz o risco de regressões e facilita a manutenção acadêmica e profissional.
 
-## 7. Conclusão
+## 7. Dicas de estudo
 
-Cada arquivo do projeto tem uma função específica dentro da arquitetura: definição de regras, dados, apresentação visual, navegação, documentação e execução. Essa separação deixa o sistema mais fácil de entender e expandir em projetos acadêmicos ou comerciais.
+- Comece pelo Java para entender a lógica de negócio e o modelo de domínio.
+- Depois estude o HTML para entender a estrutura das páginas.
+- Em seguida, revise o CSS para perceber como a aparência é aplicada.
+- Por fim, compare o comportamento do JavaScript com a estrutura HTML para entender a lógica de renderização e interatividade.
 
-4. Veja se o CSS não está sobrescrevendo elementos.
-5. Verifique o Java se a lógica de negócio estiver envolvida.
+## 8. Conclusão
 
-## 6. Dicas de estudo
-
-- Comece pelo Java, porque ele explica a lógica de domínio.
-- Depois estude a parte web, porque ela transforma dados em interface.
-- Por fim, compare as relações entre dados e visual.
-
-## 7. Conclusão
-
-Cada arquivo tem um papel específico dentro do projeto. Entender essa divisão deixa o código mais fácil de manter, ajustar e reutilizar.
+Cada arquivo do projeto tem um papel específico: regras de negócio, dados, apresentação visual, navegação, leitura e compra. Entender essa divisão torna o sistema mais fácil de manter, ajustar e reutilizar, especialmente em um contexto acadêmico ou de evolução futura do projeto.
