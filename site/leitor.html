@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leitor | FanVerse</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body data-page="leitor">
+    <header class="topbar">
+      <div class="container navbar">
+        <a href="index.html" class="brand">
+          <span class="brand-mark">F</span>
+          <span>FanVerse</span>
+        </a>
+        <nav class="nav-links">
+          <a href="index.html">Início</a>
+          <a href="catalogo.html">Catálogo</a>
+          <a href="colecao.html?id=cronicas-da-baluarte">Coleções</a>
+          <a href="loja.html">Loja</a>
+          <a href="autor.html">Autor</a>
+        </nav>
+        <div class="nav-actions">
+          <button id="theme-toggle" class="button-secondary">Modo claro</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="reader-shell">
+      <div class="reader-view">
+        <div class="reader-toolbar">
+          <div class="reader-controls">
+            <a class="icon-btn" id="reader-back" href="index.html">← Voltar</a>
+            <button class="icon-btn" type="button">A-</button>
+            <button class="icon-btn" type="button">A+</button>
+          </div>
+          <div class="reader-controls">
+            <button class="icon-btn" type="button">Claro</button>
+            <button class="icon-btn" type="button">Escuro</button>
+          </div>
+        </div>
+        <div class="reader-body">
+          <h1 id="reader-title">Título</h1>
+          <div id="reader-subtitle" class="reader-subtitle">Coleção • Arco</div>
+          <div id="reader-text" class="reader-text"></div>
+          <div class="chapter-nav">
+            <a class="button-secondary" id="chapter-prev" href="catalogo.html">Capítulo anterior</a>
+            <a class="button" id="chapter-next" href="catalogo.html">Próximo capítulo</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container footer-grid">
+        <div>FanVerse • Leitor digital</div>
+      </div>
+    </footer>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coleção | FanVerse</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body data-page="colecao">
+    <header class="topbar">
+      <div class="container navbar">
+        <a href="index.html" class="brand">
+          <span class="brand-mark">F</span>
+          <span>FanVerse</span>
+        </a>
+        <nav class="nav-links">
+          <a href="index.html">Início</a>
+          <a href="catalogo.html">Catálogo</a>
+          <a href="colecao.html?id=cronicas-da-baluarte">Coleções</a>
+          <a href="loja.html">Loja</a>
+          <a href="autor.html">Autor</a>
+        </nav>
+        <div class="nav-actions">
+          <button id="theme-toggle" class="button-secondary">Modo claro</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="collection-hero">
+        <div class="collection-cover">
+          <img id="collection-cover" src="" alt="Capa da coleção" />
+        </div>
+        <div class="collection-details">
+          <h1 id="collection-title">Coleção</h1>
+          <p id="collection-description" class="lead"></p>
+          <div class="stats" id="collection-meta"></div>
+          <div class="hero-actions">
+            <a class="button" href="catalogo.html">Explorar catálogo</a>
+            <a class="button-secondary" href="index.html">Voltar ao início</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="list-panel">
+          <div id="arc-list" class="arc-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-grid">
+        <div>FanVerse • Coleções e arcos</div>
+      </div>
+    </footer>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
