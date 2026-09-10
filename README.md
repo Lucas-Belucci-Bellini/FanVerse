@@ -1,31 +1,47 @@
 # FanVerse
 
-Sistema Java de biblioteca e catálogo para organização de fan fictions, arcos, coleções e livros digitais.
+FanVerse é um projeto completo que combina duas camadas bem separadas:
 
-## Objetivo
-O projeto foi pensado para funcionar como base para um catálogo de obras, com foco em:
+- uma base de domínio em Java para biblioteca, usuários, compras, coleções e catálogo;
+- uma interface web moderna em Vite para apresentar e atualizar o catálogo pelo próprio site.
+
+A ideia central é manter a lógica de negócio em Java intacta e usar a camada web como uma visão visual e interativa dos dados, sem mexer no código original da biblioteca.
+
+## Visão geral
+
+O projeto foi pensado para funcionar como base para:
 
 - organização de livros e coleções;
-- estrutura para até 50 obras catalogadas;
-- suporte a livros digitais e físicos;
-- controle básico de empréstimos;
-- preparação para futuras compras e distribuição de conteúdos em Markdown.
+- controle de até 50 itens no catálogo;
+- livros digitais e físicos;
+- usuários e empréstimos;
+- compras e transações;
+- apresentação premium em front-end web;
+- edição do catálogo pela própria interface do site sem afetar o código Java.
 
-## Estrutura principal
+## Estrutura atual do projeto
 
 ```text
 FanVerse/
 ├── README.md
+├── index.html
+├── package.json
+├── vite.config.js
+├── server.js
+├── .gitignore
+├── data/
+│   └── catalogo.json
 ├── src/
+│   ├── main.js
+│   ├── style.css
 │   ├── biblioteca/
-│   │   └── Biblioteca.java
+│   │   ├── Biblioteca.java
+│   │   └── Compra.java
 │   ├── catalogo/
 │   │   └── Catalogo.java
 │   ├── colecoes/
 │   │   ├── Colecao.java
 │   │   └── ColecaoLivros.java
-│   ├── compras/
-│   │   └── Compra.java
 │   ├── livros/
 │   │   ├── CodigoLivro.java
 │   │   ├── Livro.java
@@ -33,97 +49,113 @@ FanVerse/
 │   │   └── LivroFisico.java
 │   ├── principal/
 │   │   └── Principal.java
-│   └── usuarios/
-│       └── Usuario.java
-├── livros md/
+│   ├── usuarios/
+│   │   └── Usuario.java
+│   └── ...
+├── site/
 │   ├── README.md
-│   ├── cronicas-baluarte-arco-01.md
-│   ├── cronicas-baluarte-arco-02.md
-│   └── fanfic-sol-volume-01.md
-└── out/
+│   ├── index.html
+│   ├── catalogo.html
+│   ├── colecao.html
+│   ├── livro.html
+│   ├── loja.html
+│   ├── leitor.html
+│   ├── autor.html
+│   └── assets/
+├── docs/
+│   ├── README.md
+│   └── documentacao-arquivos.md
+├── out/
+├── dist/
+├── node_modules/
+├── livros md/
+│   └── README.md
+└── ...
 ```
 
-## Como compilar
-No terminal, na pasta do projeto:
+## Arquitetura do projeto
+
+### Camada Java
+A pasta `src/` contém a lógica de negócio da biblioteca, incluindo:
+
+- livros e subclasses;
+- usuários;
+- biblioteca;
+- catálogo;
+- coleções;
+- compras.
+
+### Camada web
+A interface visual atual é montada em Vite e fica na pasta raiz com `index.html`, `src/main.js` e `src/style.css`.
+
+### Camada de dados
+Os dados do catálogo ficam em `data/catalogo.json`, que pode ser usado pela interface e por uma API ou persistência futura.
+
+### Camada de servidor
+O arquivo `server.js` expõe API REST simples para carregar e atualizar o catálogo.
+
+## Como rodar o projeto
+
+### Instalar dependências
+
+```bash
+npm install
+```
+
+### Rodar o front-end em desenvolvimento
+
+```bash
+npm run dev
+```
+
+### Gerar build de produção
+
+```bash
+npm run build
+```
+
+### Rodar a API/servidor
+
+```bash
+npm start
+```
+
+### Executar a lógica Java
+
+No Linux/macOS:
 
 ```bash
 javac -d out $(find src -name "*.java")
+java -cp out principal.Principal
 ```
 
 No Windows PowerShell:
 
 ```powershell
 javac -d out (Get-ChildItem -Recurse -Filter *.java -Path src | ForEach-Object { $_.FullName })
-```
-
-## Como executar
-
-```bash
 java -cp out principal.Principal
 ```
 
-## Conceitos implementados
-- encapsulamento com atributos privados;
-- herança com `extends` e `super()`;
-- polimorfismo com listas `Livro` e chamadas de `apresentarDados()`;
-- sobrecarga com `exibirMensagem()` e `exibirMensagem(String)`;
-- composição com `CodigoLivro` dentro de `Livro`;
-- agregação com `Biblioteca` e `Usuario`;
-- associação simples com `realizarEmprestimo(Livro livro)`;
-- catálogo com limite de `50` livros;
-- coleções como entidade independente para obras e arcos;
-- arquitetura preparada para futuras compras e arquivos Markdown.
+## Regras importantes da arquitetura
 
-## Como adicionar novos livros
-Crie uma instância do tipo desejado, por exemplo:
+- O código Java permanece como domínio e regra de negócio.
+- O site não deve sobrescrever classes Java ou alterar o modelo de negócios original.
+- O catálogo do front-end pode ser atualizado por `localStorage` ou por um backend JSON sem mexer na lógica Java.
+- Esta separação facilita manutenção, apresentação acadêmica e extensão do projeto.
 
-```java
-LivroDigital digital = new LivroDigital("Título", "Lucas Belucci Bellini", 2026, 120.0);
-LivroFisico fisico = new LivroFisico("Título", "Lucas Belucci Bellini", 2026, 250);
-```
+## Documentação detalhada
 
-Depois adicione ao catálogo ou à coleção:
+- Documentação geral: [docs/README.md](docs/README.md)
+- Descrição arquivo a arquivo: [docs/documentacao-arquivos.md](docs/documentacao-arquivos.md)
 
-```java
-Catalogo catalogo = new Catalogo();
-catalogo.adicionarLivro(digital);
-```
+## Observações finais
 
-## Como criar uma coleção
+Este projeto funciona como exemplo prático de:
 
-```java
-Colecao colecao = new Colecao("Nome da Coleção", "Descrição da obra", "Lucas Belucci Bellini");
-colecao.adicionarLivro(digital);
-colecao.adicionarLivro(fisico);
-```
+- orientação a objetos em Java;
+- arquitetura em camadas;
+- front-end moderno com Vite;
+- apresentação de catálogo e coleções;
+- atualização segura do catálogo sem alterar o sistema principal.
 
-## Arquivos Markdown
-A pasta `livros md/` é um espaço reservado para armazenar os conteúdos das obras em `.md`, como:
-
-- `cronicas-baluarte-arco-01.md`
-- `cronicas-baluarte-arco-02.md`
-- `fanfic-sol-volume-01.md`
-
-Essa estrutura permite, no futuro, associar cada livro ao seu arquivo Markdown correspondente.
-
-## Limite de 50 livros
-A constante de limite fica centralizada em `Catalogo`:
-
-```java
-private static final int LIMITE_LIVROS = 50;
-```
-
-Assim, o controle do limite fica em um único lugar e facilita futuras alterações de regra.
-
-## Futuras expansões planejadas
-- sistema de login e usuários;
-- catálogo online;
-- associação de arquivos `.md` a cada obra;
-- histórico de empréstimos;
-- vendas e compras;
-- integração com site ou API.
-
-## Autor padrão
-Todos os livros do projeto consideram como autor padrão:
-
-`Lucas Belucci Bellini`
+Ele pode ser usado como base para atividades acadêmicas, portfólio, apresentação e extensões futuras.

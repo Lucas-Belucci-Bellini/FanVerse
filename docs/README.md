@@ -1,53 +1,45 @@
 # Documentação do projeto FanVerse
 
-Este documento centraliza a explicação do projeto para facilitar manutenção, debug, reutilização e apresentação em atividades acadêmicas.
+Este documento reúne a visão geral do projeto, a arquitetura atual e a referência rápida para cada parte importante do repositório.
 
 ## 1. Visão geral
 
-O FanVerse é um projeto que mistura duas ideias:
+O FanVerse foi desenvolvido como uma plataforma de biblioteca e catálogo de fanfics, com uma base de regras de negócio em Java e uma experiência visual moderna em Vite.
 
-- uma base Java orientada a objetos para biblioteca, catálogo, usuários, compras e coleções;
-- um site front-end para apresentar obras, coleções, loja e leitura.
+A arquitetura foi organizada para separar:
 
-A estrutura foi pensada para manter a lógica de negócio em Java e separar a parte visual da parte de dados.
+- lógica de negócio em Java;
+- front-end em Vite e HTML/CSS/JS;
+- dados do catálogo em JSON;
+- servidor API em Node/Express;
+- documentação e manutenção em arquivos de suporte.
 
-## 2. Objetivo do projeto
+## 2. Objetivo do sistema
 
-O sistema busca representar:
+O projeto busca representar:
 
-- livros digitais e físicos;
-- usuários e empréstimos;
-- compras;
-- coleção de obras por temática;
-- catálogo com capacidade para até 50 itens;
-- página web para vender e exibir a biblioteca.
+- coleções e arcos de histórias;
+- representação de livros digitais e físicos;
+- usuários e operações de empréstimo;
+- compra e transação;
+- catálogo visual com expansão ao longo do tempo;
+- edição do catálogo pelo próprio site de forma segura;
+- manutenção sem alterar a lógica Java original.
 
-## 3. Estrutura principal
+## 3. Estrutura atual
 
 ```text
 FanVerse/
 ├── README.md
-├── docs/
-│   ├── README.md
-│   └── documentacao-arquivos.md
+├── index.html
+├── vite.config.js
+├── package.json
+├── server.js
 ├── data/
 │   └── catalogo.json
-├── site/
-│   ├── assets/
-│   │   ├── css/
-│   │   │   └── style.css
-│   │   └── js/
-│   │       ├── app.js
-│   │       └── data.js
-│   ├── autor.html
-│   ├── catalogo.html
-│   ├── colecao.html
-│   ├── index.html
-│   ├── leitor.html
-│   ├── livro.html
-│   ├── loja.html
-│   └── README.md
 ├── src/
+│   ├── main.js
+│   ├── style.css
 │   ├── biblioteca/
 │   │   ├── Biblioteca.java
 │   │   └── Compra.java
@@ -56,8 +48,6 @@ FanVerse/
 │   ├── colecoes/
 │   │   ├── Colecao.java
 │   │   └── ColecaoLivros.java
-│   ├── compras/
-│   │   └── Compra.java
 │   ├── livros/
 │   │   ├── CodigoLivro.java
 │   │   ├── Livro.java
@@ -67,123 +57,101 @@ FanVerse/
 │   │   └── Principal.java
 │   └── usuarios/
 │       └── Usuario.java
-├── package.json
-├── server.js
+├── site/
+│   ├── README.md
+│   ├── index.html
+│   ├── catalogo.html
+│   ├── colecao.html
+│   ├── livro.html
+│   ├── loja.html
+│   ├── leitor.html
+│   ├── autor.html
+│   └── assets/
+├── docs/
+│   ├── README.md
+│   └── documentacao-arquivos.md
+├── dist/
 ├── out/
 ├── livros md/
 │   └── README.md
-└── README.md
+└── .gitignore
 ```
 
-## 4. Arquitetura lógica
+## 4. Camadas do projeto
 
-### Camada Java
+### 4.1 Camada Java
+A lógica principal da biblioteca está em `src/`.
 
-A pasta [src](../src) contém a lógica principal do sistema. Ela usa conceitos de POO:
+Ela contém as classes de domínio e as regras do sistema, como:
 
-- encapsulamento;
-- herança;
-- polimorfismo;
-- composição;
-- agregação;
-- associação;
-- coleções Java.
+- `Livro` e subclasses;
+- `Usuario`;
+- `Biblioteca`;
+- `Catalogo`;
+- `Colecao`;
+- `Compra`;
+- `Principal`.
 
-### Camada web
+### 4.2 Camada Vite / Front-end
+A interface moderna e responsiva do projeto foi migrada para Vite e está concentrada nos arquivos:
 
-A pasta [site](../site) contém as páginas HTML, estilos CSS e scripts JavaScript. Ela apresenta os dados em uma interface amigável e responsiva.
+- `index.html`
+- `src/main.js`
+- `src/style.css`
 
-### Camada de dados
+Essa camada é a responsável por renderizar o catálogo, o painel de destaque e o editor de catálogo.
 
-A pasta [data](../data) contém o arquivo [data/catalogo.json](../data/catalogo.json), que é a base de dados do catálogo do site.
+### 4.3 Camada de dados
+A base de dados do front-end do catálogo fica em:
 
-## 5. Como reutilizar o código
+- `data/catalogo.json`
 
-### Reuso em Java
+Esse arquivo guarda as coleções, arcos e livros oferecidos pela interface.
 
-- [src/livros/Livro.java](../src/livros/Livro.java) pode ser reutilizado como modelo base para qualquer sistema de biblioteca.
-- [src/livros/LivroDigital.java](../src/livros/LivroDigital.java) e [src/livros/LivroFisico.java](../src/livros/LivroFisico.java) mostram como estender uma classe base.
-- [src/catalogo/Catalogo.java](../src/catalogo/Catalogo.java) pode ser adaptado para qualquer catálogo de produtos, músicas, artigos ou itens de coleção.
-- [src/biblioteca/Biblioteca.java](../src/biblioteca/Biblioteca.java) é útil para sistemas com associação de usuários e movimentações.
+### 4.4 Camada de servidor
+O servidor Express em `server.js` expõe endpoints para recuperar e salvar o catálogo.
 
-### Reuso em front-end
+## 5. Fluxo de uso
 
-- [site/assets/js/app.js](../site/assets/js/app.js) pode servir como base para páginas dinâmicas em outras aplicações.
-- [site/assets/css/style.css](../site/assets/css/style.css) contém estilos reutilizáveis para cards, botões, hero section e layout responsivo.
-- [site/assets/js/data.js](../site/assets/js/data.js) pode ser trocado por uma API real em projetos futuros.
+1. O Java representa a estrutura de negócio e as regras do sistema.
+2. O front-end em Vite exibe os dados do catálogo em uma interface premium.
+3. O usuário pode adicionar itens pela própria página.
+4. O navegador salva as alterações localmente em `localStorage` ou um backend JSON, sem tocar no código Java.
+5. O projeto continua pronto para evoluir com API real, banco de dados ou deploy em Vercel.
 
-## 6. Como rodar o projeto
+## 6. Como rodar
+
+### Front-end
+
+```bash
+npm install
+npm run dev
+```
+
+### Build de produção
+
+```bash
+npm run build
+```
+
+### Servidor Node
+
+```bash
+npm start
+```
 
 ### Java
-
-No terminal da pasta do projeto:
 
 ```bash
 javac -d out $(find src -name "*.java")
 java -cp out principal.Principal
 ```
 
-### Front-end local
+## 7. Documentação complementar
 
-```bash
-python -m http.server 8000
-```
+- Documentação detalhada por arquivo: [documentacao-arquivos.md](documentacao-arquivos.md)
+- Visão geral do repositório: [../README.md](../README.md)
 
-Depois acesse:
+## 8. Conclusão
 
-```text
-http://localhost:8000/
-```
-
-## 7. O que cada camada representa
-
-### Java
-
-Representa o sistema de negócio e regras de domínio.
-
-### HTML
-
-Representa a estrutura das páginas e conteúdo visual.
-
-### CSS
-
-Representa o visual, tema, responsividade e layout.
-
-### JavaScript
-
-Representa interatividade e renderização dinâmica dos dados.
-
-## 8. Observações importantes
-
-- A lógica Java não deve ser alterada para dar suporte ao front-end visual.
-- O catálogo do site deve ser considerado como uma camada separada e paralela ao sistema em Java.
-- Esta separação é útil para projetos acadêmicos, porque deixa o entendimento mais claro e evita acoplamento.
-
-## 9. Sugestões de extensão
-
-- adicionar login e controle de usuários;
-- criar banco de dados real;
-- converter o catálogo para API REST;
-- integrar Java com JSON ou banco;
-- criar página de administração para editar catálogo.
-
-## 10. Arquivos mais importantes para estudo
-
-Se você quiser revisar os pontos principais do projeto, comece por:
-
-1. [src/livros/Livro.java](../src/livros/Livro.java)
-2. [src/catalogo/Catalogo.java](../src/catalogo/Catalogo.java)
-3. [src/principal/Principal.java](../src/principal/Principal.java)
-4. [site/index.html](../site/index.html)
-5. [site/assets/js/app.js](../site/assets/js/app.js)
-6. [site/assets/css/style.css](../site/assets/css/style.css)
-
-## 11. Conclusão
-
-Este projeto funciona como um bom exemplo de como combinar:
-
-- programação orientada a objetos em Java;
-- estrutura de site front-end em HTML, CSS e JS;
-- organização de dados e reutilização de código.
-
-Ele pode ser usado como base para exercícios, provas, projetos acadêmicos e extensões futuras.
+O FanVerse funciona como um exemplo completo de arquitetura em camadas, unindo domínio Java, front-end web e dados dinâmicos. Ele foi pensado para ser fácil de entender, revisar e evoluir em projetos acadêmicos ou demonstrações de portfolio.
