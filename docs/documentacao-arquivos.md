@@ -1,4 +1,4 @@
-# Documentação detalhada dos arquivos
+    # Documentação detalhada dos arquivos
 
 Este documento explica a finalidade de cada arquivo principal do projeto, com foco na estrutura atual em Java, Vite e catálogo dinâmico.
 

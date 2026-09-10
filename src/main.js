@@ -1,6 +1,16 @@
+/**
+ * Arquivo principal da interface web do FanVerse.
+ *
+ * <p>Este script funciona como o "motor" do front-end moderno. Ele carrega o catálogo,
+ * renderiza a página inicial, monta os cards dos livros e dá suporte ao formulário que
+ * permite adicionar novos itens ao catálogo no próprio site sem alterar a lógica Java.</p>
+ */
 import './style.css';
 
+// Chave usada para guardar o catálogo em localStorage no navegador.
 const STORAGE_KEY = 'fanverse-catalog-local';
+
+// Dados de fallback para garantir que a interface funcione mesmo sem arquivo externo.
 const FALLBACK_CATALOG = {
   author: {
     name: 'Lucas Belucci Bellini',
@@ -58,13 +68,21 @@ const FALLBACK_CATALOG = {
   ]
 };
 
+// Pega o container principal da aplicação para renderizar o HTML dinâmico.
 const app = document.querySelector('#app');
 
+// Formata valores monetários em BRL para exibição amigável na interface.
 const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL'
 }).format(value);
 
+/**
+ * Transforma a estrutura de coleções e arcos em uma lista simples de livros.
+ *
+ * @param {object} data catálogo em JSON
+ * @returns {Array} lista de livros para montar o grid visual
+ */
 function getAllBooks(data) {
   return data.collections.flatMap((collection) =>
     collection.arcs.flatMap((arc) =>
@@ -77,6 +95,12 @@ function getAllBooks(data) {
   );
 }
 
+/**
+ * Carrega o catálogo do navegador ou do arquivo JSON.
+ *
+ * A ideia é proteger a lógica Java. O front-end lê os dados do JSON e salva uma cópia
+ * em localStorage para permitir edição sem alterar o domínio Java.
+ */
 async function loadCatalog() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -104,6 +128,12 @@ async function loadCatalog() {
   }
 }
 
+/**
+ * Constrói o HTML principal do catálogo e da landing page.
+ *
+ * @param {object} data catálogo em JSON
+ * @returns {string} HTML renderizado em string
+ */
 function buildCatalogView(data) {
   const allBooks = getAllBooks(data);
   const featured = allBooks.slice(0, 3);
@@ -216,6 +246,13 @@ function buildCatalogView(data) {
   `;
 }
 
+/**
+ * Garante que uma coleção exista antes de adicionar um novo livro.
+ *
+ * @param {object} data catálogo atual
+ * @param {string} collectionTitle nome da coleção
+ * @returns {object} coleção alvo
+ */
 function ensureCollection(data, collectionTitle) {
   const normalized = collectionTitle.trim().toLowerCase();
   let target = data.collections.find((collection) => collection.title.toLowerCase() === normalized);
@@ -245,12 +282,22 @@ function ensureCollection(data, collectionTitle) {
   return target;
 }
 
+/**
+ * Salva o catálogo atual no browser e redesenha a interface.
+ *
+ * @param {object} data catálogo atualizado
+ */
 function saveCatalog(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   app.innerHTML = buildCatalogView(data);
   bindEvents(data);
 }
 
+/**
+ * Associa os eventos do formulário e do botão de reset.
+ *
+ * @param {object} data catálogo atual
+ */
 function bindEvents(data) {
   const form = document.querySelector('#catalog-form');
   const resetButton = document.querySelector('#reset-catalog');
@@ -298,6 +345,9 @@ function bindEvents(data) {
   });
 }
 
+/**
+ * Inicializa o app carregando o catálogo e vinculando os eventos.
+ */
 async function init() {
   try {
     const data = await loadCatalog();

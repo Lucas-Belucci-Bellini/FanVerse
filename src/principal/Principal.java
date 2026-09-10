@@ -1,7 +1,10 @@
 /**
  * Classe principal do sistema FanVerse.
- * Este ponto de entrada demonstra o uso de herança, polimorfismo, associação, agregação,
- * composição, sobrecarga, catálogo e estrutura futura para compras.
+ *
+ * <p>Este é o ponto de entrada da aplicação. Ele reúne os exemplos de uso de todas as
+ * classes do domínio: livro, usuário, biblioteca, coleção, catálogo e compra. A ideia é
+ * demonstrar em um único fluxo principal como os conceitos de orientação a objetos funcionam
+ * de forma integrada dentro do projeto.</p>
  */
 package principal;
 
@@ -18,12 +21,19 @@ import livros.LivroFisico;
 import usuarios.Usuario;
 
 public class Principal {
+    /**
+     * Método principal que executa a demonstração do projeto.
+     *
+     * @param args argumentos de linha de comando
+     */
     public static void main(String[] args) {
         System.out.println("=== Sistema de Biblioteca FanVerse ===\n");
 
+        // Cria exemplos de livros digitais e físicos para simular o acervo.
         LivroDigital livroDigital = new LivroDigital("Crônicas da Baluarte - Arco 1", "Lucas Belucci Bellini", 2024, 150.5);
         LivroFisico livroFisico = new LivroFisico("A FanFic do Sol - Volume 1", "Lucas Belucci Bellini", 2025, 320);
 
+        // Cria usuário e biblioteca para associar operações de empréstimo e compra.
         Usuario usuario = new Usuario("Ana Souza", "MATR-001");
         Biblioteca biblioteca = new Biblioteca("FanVerse Biblioteca", "São Paulo");
         biblioteca.associarUsuario(usuario);
@@ -82,6 +92,7 @@ public class Principal {
         catalogo.adicionarLivro(livroDigital);
         catalogo.adicionarLivro(livroFisico);
 
+        // Cria vários livros extras para demonstrar o limite de 50 itens do catálogo.
         List<Livro> livrosCatalogo = new ArrayList<>();
         for (int i = 0; i < 48; i++) {
             Livro livroTemporario = new LivroDigital("Livro digital de suporte " + i, "Lucas Belucci Bellini", 2026, 20 + i);
@@ -95,6 +106,7 @@ public class Principal {
         System.out.println("Quantidade de livros no catálogo: " + catalogo.quantidadeLivros());
         System.out.println("Busca por título: " + catalogo.buscarPorTitulo("A FanFic do Sol - Volume 1 - Edição Revisada"));
 
+        // Este livro tentará exceder o limite do catálogo.
         Livro livroLimite = new LivroFisico("Livro extra de verificação", "Lucas Belucci Bellini", 2026, 300);
         try {
             catalogo.adicionarLivro(livroLimite);
