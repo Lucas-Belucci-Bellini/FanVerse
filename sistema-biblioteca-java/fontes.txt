@@ -1,7 +1,0 @@
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\biblioteca\Biblioteca.java
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\livros\CodigoLivro.java
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\livros\Livro.java
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\livros\LivroDigital.java
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\livros\LivroFisico.java
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\principal\Principal.java
-C:\Users\Usuario\Desktop\FanVerse\sistema-biblioteca-java\src\usuarios\Usuario.java
