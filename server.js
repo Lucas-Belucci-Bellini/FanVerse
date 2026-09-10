@@ -7,14 +7,20 @@ const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const DATA_PATH = path.join(ROOT, 'data', 'catalogo.json');
 
-app.use(express.json());
-app.use('/assets', express.static(path.join(ROOT, 'site', 'assets')));
-app.use(express.static(path.join(ROOT, 'site')));
-
 const readCatalog = () => {
   const raw = fs.readFileSync(DATA_PATH, 'utf-8');
   return JSON.parse(raw);
 };
+
+const writeCatalog = (catalog) => {
+  fs.writeFileSync(DATA_PATH, JSON.stringify(catalog, null, 2));
+  return catalog;
+};
+
+app.use(express.json({ limit: '2mb' }));
+app.use('/assets', express.static(path.join(ROOT, 'site', 'assets')));
+app.use(express.static(path.join(ROOT, 'site')));
+app.use('/src', express.static(path.join(ROOT, 'src')));
 
 app.get('/api/catalogo', (req, res) => {
   try {
@@ -23,6 +29,22 @@ app.get('/api/catalogo', (req, res) => {
   } catch (error) {
     console.error('Erro ao ler catálogo:', error);
     res.status(500).json({ message: 'Erro ao carregar catálogo.' });
+  }
+});
+
+app.put('/api/catalogo', (req, res) => {
+  try {
+    const payload = req.body;
+
+    if (!payload || !Array.isArray(payload.collections)) {
+      return res.status(400).json({ message: 'Payload inválido para o catálogo.' });
+    }
+
+    const updated = writeCatalog(payload);
+    return res.json({ message: 'Catálogo atualizado com sucesso.', catalog: updated });
+  } catch (error) {
+    console.error('Erro ao gravar catálogo:', error);
+    return res.status(500).json({ message: 'Erro ao salvar o catálogo.' });
   }
 });
 
