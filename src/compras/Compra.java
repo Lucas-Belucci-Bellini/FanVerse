@@ -27,6 +27,8 @@ public class Compra {
     private String dataCompra;
     // Status atual do pedido, como pendente, concluído ou cancelado.
     private String status;
+    // Forma de pagamento escolhida pelo cliente.
+    private String metodoPagamento;
 
     /**
      * Cria uma compra com dados básicos e gera um identificador único.
@@ -38,11 +40,26 @@ public class Compra {
      * @param status situação atual da compra
      */
     public Compra(Usuario comprador, Livro livro, double valor, String dataCompra, String status) {
+        this(comprador, livro, valor, dataCompra, status, "Não informado");
+    }
+
+    /**
+     * Cria uma compra com dados completos, incluindo o método de pagamento.
+     *
+     * @param comprador usuário que efetuou a compra
+     * @param livro obra adquirida
+     * @param valor valor da transação
+     * @param dataCompra data em formato textual
+     * @param status situação atual da compra
+     * @param metodoPagamento método de pagamento escolhido
+     */
+    public Compra(Usuario comprador, Livro livro, double valor, String dataCompra, String status, String metodoPagamento) {
         setComprador(comprador);
         setLivro(livro);
         setValor(valor);
         setDataCompra(dataCompra);
         setStatus(status);
+        setMetodoPagamento(metodoPagamento);
         this.idCompra = contador++;
     }
 
@@ -161,6 +178,40 @@ public class Compra {
     }
 
     /**
+     * Retorna o método de pagamento usado na compra.
+     *
+     * @return método de pagamento
+     */
+    public String getMetodoPagamento() {
+        return metodoPagamento;
+    }
+
+    /**
+     * Define o método de pagamento da compra.
+     *
+     * @param metodoPagamento forma de pagamento escolhida
+     */
+    public void setMetodoPagamento(String metodoPagamento) {
+        if (metodoPagamento == null || metodoPagamento.trim().isEmpty()) {
+            this.metodoPagamento = "Não informado";
+            return;
+        }
+        this.metodoPagamento = metodoPagamento.trim();
+    }
+
+    /**
+     * Finaliza a compra e atualiza o status da transação.
+     */
+    public void processarCompra() {
+        this.status = "Concluída";
+        System.out.println("Compra concluída com sucesso!");
+        System.out.println("Usuário: " + comprador.getNome());
+        System.out.println("Livro: " + livro.getTitulo());
+        System.out.println("Valor: R$ " + valor);
+        System.out.println("Pagamento: " + metodoPagamento);
+    }
+
+    /**
      * Representação textual da compra para debug.
      *
      * @return resumo do registro da compra
@@ -173,6 +224,7 @@ public class Compra {
                 ", valor=" + valor +
                 ", dataCompra='" + dataCompra + '\'' +
                 ", status='" + status + '\'' +
+                ", metodoPagamento='" + metodoPagamento + '\'' +
                 '}';
     }
 }

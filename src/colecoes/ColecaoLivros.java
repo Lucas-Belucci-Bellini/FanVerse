@@ -1,82 +1,72 @@
 /**
- * Versão simplificada de uma coleção de livros.
+ * Versão com limite de capacidade da coleção principal.
  *
- * <p>Essa classe é útil quando a ideia é guardar vários itens em uma lista e manter um
- * limite máximo de 50 registros. É mais leve que {@link Colecao}, mas mantém o mesmo
- * princípio: organizar bibliotecas ou seleções de obras por agrupamento.</p>
+ * <p>Essa classe mantém a mesma ideia da coleção genérica, mas reforça uma regra de
+ * capacidade máxima. Em vez de duplicar a lógica, ela reaproveita a estrutura e a
+ * validação já presentes em {@link Colecao}, deixando o domínio mais consistente.</p>
  */
 package colecoes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import livros.Livro;
 
-public class ColecaoLivros {
-    // Limite máximo de registros permitidos nesta coleção simples.
+public class ColecaoLivros extends Colecao {
+    // Limite máximo de registros permitidos nesta coleção específica.
     private static final int LIMITE_MAXIMO = 50;
-    // Lista interna de livros da coleção.
-    private final List<Livro> livros;
 
     /**
-     * Cria uma coleção vazia.
+     * Cria uma coleção limitada com dados básicos.
+     *
+     * @param nome nome da coleção
+     * @param descricao descrição da coleção
+     * @param autor autor da obra
      */
-    public ColecaoLivros() {
-        this.livros = new ArrayList<>();
+    public ColecaoLivros(String nome, String descricao, String autor) {
+        super(nome, descricao, autor);
     }
 
     /**
-     * Adiciona um livro se ainda houver espaço na lista.
+     * Retorna o limite máximo de livros da coleção.
      *
-     * @param livro livro a ser adicionado
+     * @return capacidade máxima permitida
      */
+    public static int getLimiteMaximo() {
+        return LIMITE_MAXIMO;
+    }
+
+    /**
+     * Adiciona um livro respeitando o limite máximo da coleção.
+     *
+     * @param livro livro a ser incluído
+     */
+    @Override
     public void adicionarLivro(Livro livro) {
         if (livro == null) {
             throw new IllegalArgumentException("O livro não pode ser nulo.");
         }
 
-        if (livros.size() >= LIMITE_MAXIMO) {
+        if (quantidadeLivros() >= LIMITE_MAXIMO) {
             throw new IllegalStateException("A coleção já atingiu o limite máximo de 50 livros.");
         }
 
-        livros.add(livro);
+        super.adicionarLivro(livro);
     }
 
     /**
-     * Remove um livro da coleção.
-     *
-     * @param livro livro a ser removido
-     * @return true se a operação obteve sucesso
-     */
-    public boolean removerLivro(Livro livro) {
-        return livros.remove(livro);
-    }
-
-    /**
-     * Retorna a lista de livros em modo sem modificação externa.
-     *
-     * @return lista imutável de livros
-     */
-    public List<Livro> listarLivros() {
-        return Collections.unmodifiableList(livros);
-    }
-
-    /**
-     * Retorna a quantidade atual de itens armazenados.
+     * Retorna a quantidade atual de livros armazenados.
      *
      * @return total de livros
      */
     public int getQuantidadeLivros() {
-        return livros.size();
+        return quantidadeLivros();
     }
 
     /**
      * Representação textual da coleção para debug.
      *
-     * @return resumo da lista
+     * @return resumo da coleção com o limite
      */
     @Override
     public String toString() {
-        return "ColecaoLivros {quantidade=" + livros.size() + ", livros=" + livros + '}';
+        return "ColecaoLivros {nome='" + getNome() + "', quantidade=" + quantidadeLivros() + ", limite=" + LIMITE_MAXIMO + '}';
     }
 }
