@@ -1,25 +1,24 @@
 # FanVerse
 
-FanVerse é um projeto completo que combina duas camadas bem separadas:
+FanVerse é um projeto de biblioteca e catálogo de histórias. O repositório reúne a parte em Java, usada para representar as classes do sistema, e a parte web, usada para mostrar e editar o catálogo.
 
-- uma base de domínio em Java para biblioteca, usuários, compras, coleções e catálogo;
-- uma interface web moderna em Vite para apresentar e atualizar o catálogo pelo próprio site.
+A ideia é manter cada parte com uma função clara: o Java cuida dos objetos e regras do sistema, enquanto o site cuida da apresentação dos dados.
 
-A ideia central é manter a lógica de negócio em Java intacta e usar a camada web como uma visão visual e interativa dos dados, sem mexer no código original da biblioteca.
+## O que existe no projeto
 
-## Visão geral
+Hoje o projeto tem:
 
-O projeto foi pensado para funcionar como base para:
-
-- organização de livros e coleções;
-- controle de até 50 itens no catálogo;
 - livros digitais e físicos;
 - usuários e empréstimos;
-- compras e transações;
-- apresentação premium em front-end web;
-- edição do catálogo pela própria interface do site sem afetar o código Java.
+- biblioteca;
+- catálogo com limite de 50 livros;
+- coleções;
+- registro de compras;
+- catálogo em JSON;
+- interface web feita com Vite;
+- servidor Node/Express para o catálogo.
 
-## Estrutura atual do projeto
+## Estrutura principal
 
 ```text
 FanVerse/
@@ -28,7 +27,6 @@ FanVerse/
 ├── package.json
 ├── vite.config.js
 ├── server.js
-├── .gitignore
 ├── data/
 │   └── catalogo.json
 ├── src/
@@ -42,6 +40,8 @@ FanVerse/
 │   ├── colecoes/
 │   │   ├── Colecao.java
 │   │   └── ColecaoLivros.java
+│   ├── compras/
+│   │   └── Compra.java
 │   ├── livros/
 │   │   ├── CodigoLivro.java
 │   │   ├── Livro.java
@@ -49,11 +49,9 @@ FanVerse/
 │   │   └── LivroFisico.java
 │   ├── principal/
 │   │   └── Principal.java
-│   ├── usuarios/
-│   │   └── Usuario.java
-│   └── ...
+│   └── usuarios/
+│       └── Usuario.java
 ├── site/
-│   ├── README.md
 │   ├── index.html
 │   ├── catalogo.html
 │   ├── colecao.html
@@ -61,66 +59,61 @@ FanVerse/
 │   ├── loja.html
 │   ├── leitor.html
 │   ├── autor.html
-│   └── assets/
+│   ├── assets/
+│   │   ├── css/
+│   │   └── js/
+│   └── README.md
 ├── docs/
 │   ├── README.md
 │   └── documentacao-arquivos.md
-├── out/
-├── dist/
-├── node_modules/
-├── livros md/
-│   └── README.md
-└── ...
+└── .gitignore
 ```
 
-## Arquitetura do projeto
+## Como as partes se relacionam
 
-### Camada Java
-A pasta `src/` contém a lógica de negócio da biblioteca, incluindo:
+### Java
 
-- livros e subclasses;
-- usuários;
-- biblioteca;
-- catálogo;
-- coleções;
-- compras.
+As classes dentro de `src/` representam o funcionamento da biblioteca. Por exemplo, `Livro` é a classe base, `LivroDigital` e `LivroFisico` são especializações, `Usuario` representa quem usa a biblioteca e `Catalogo` controla os livros cadastrados.
 
-### Camada web
-A interface visual atual é montada em Vite e fica na pasta raiz com `index.html`, `src/main.js` e `src/style.css`.
+### Site Vite
 
-### Camada de dados
-Os dados do catálogo ficam em `data/catalogo.json`, que pode ser usado pela interface e por uma API ou persistência futura.
+`index.html`, `src/main.js` e `src/style.css` formam a interface principal atual. O JavaScript carrega os dados do catálogo, monta os cards e permite adicionar novos livros pelo formulário da página.
 
-### Camada de servidor
-O arquivo `server.js` expõe API REST simples para carregar e atualizar o catálogo.
+### Dados
 
-## Como rodar o projeto
+`data/catalogo.json` guarda as informações usadas pelo site. A estrutura possui autor, coleções, arcos e livros.
 
-### Instalar dependências
+### Servidor
+
+`server.js` usa Express para disponibilizar o catálogo por uma API. Ele também pode salvar as alterações recebidas em `data/catalogo.json`.
+
+## Como executar
+
+### 1. Instalar as dependências
 
 ```bash
 npm install
 ```
 
-### Rodar o front-end em desenvolvimento
+### 2. Abrir o front-end em desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-### Gerar build de produção
+### 3. Gerar a build
 
 ```bash
 npm run build
 ```
 
-### Rodar a API/servidor
+### 4. Iniciar o servidor Node
 
 ```bash
 npm start
 ```
 
-### Executar a lógica Java
+### 5. Compilar e executar o Java
 
 No Linux/macOS:
 
@@ -136,26 +129,28 @@ javac -d out (Get-ChildItem -Recurse -Filter *.java -Path src | ForEach-Object {
 java -cp out principal.Principal
 ```
 
-## Regras importantes da arquitetura
+## API do catálogo
 
-- O código Java permanece como domínio e regra de negócio.
-- O site não deve sobrescrever classes Java ou alterar o modelo de negócios original.
-- O catálogo do front-end pode ser atualizado por `localStorage` ou por um backend JSON sem mexer na lógica Java.
-- Esta separação facilita manutenção, apresentação acadêmica e extensão do projeto.
+O arquivo `server.js` possui estas rotas:
 
-## Documentação detalhada
+```text
+GET  /api/catalogo
+PUT  /api/catalogo
+GET  /api/catalogo/books
+GET  /api/catalogo/book/:id
+GET  /api/catalogo/collection/:id
+```
 
-- Documentação geral: [docs/README.md](docs/README.md)
-- Descrição arquivo a arquivo: [docs/documentacao-arquivos.md](docs/documentacao-arquivos.md)
+O `GET /api/catalogo` retorna o catálogo completo. O `PUT /api/catalogo` recebe um catálogo novo e salva o conteúdo no arquivo JSON.
 
-## Observações finais
+## Observações
 
-Este projeto funciona como exemplo prático de:
+O projeto possui duas partes web diferentes no repositório: a interface Vite atual e o conjunto de páginas HTML em `site/`. A pasta `site/` serve como base de páginas estáticas e referência do layout.
 
-- orientação a objetos em Java;
-- arquitetura em camadas;
-- front-end moderno com Vite;
-- apresentação de catálogo e coleções;
-- atualização segura do catálogo sem alterar o sistema principal.
+As alterações feitas pelo editor da interface são mantidas no `localStorage` do navegador e, quando a API está disponível, também podem ser enviadas para o servidor. Isso não altera diretamente as classes Java.
 
-Ele pode ser usado como base para atividades acadêmicas, portfólio, apresentação e extensões futuras.
+## Documentação
+
+A documentação da estrutura está em [`docs/README.md`](docs/README.md).
+
+A descrição dos arquivos está em [`docs/documentacao-arquivos.md`](docs/documentacao-arquivos.md).
