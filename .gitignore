@@ -1,5 +1,19 @@
+# Dependências (reinstaladas por `npm ci`; as versionadas eram só binários Windows — ver DEC-005)
 node_modules/
+
+# Artefatos gerados
 dist/
+out/
 .vite/
+coverage/
+
+# Escrita atômica do catálogo (arquivo temporário)
+data/*.tmp
+
+# Sistema / editores
 .DS_Store
+Thumbs.db
+.LCK*
+.~lock*
+*~
 npm-debug.log*
