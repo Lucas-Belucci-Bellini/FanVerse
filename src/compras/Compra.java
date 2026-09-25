@@ -8,12 +8,15 @@
  */
 package compras;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import livros.Livro;
 import usuarios.Usuario;
 
 public class Compra {
     // Controle de identificadores únicos para cada transação.
-    private static int contador = 1;
+    // AtomicInteger: evita IDs repetidos se compras forem criadas em paralelo.
+    private static final AtomicInteger CONTADOR = new AtomicInteger(1);
 
     // Código do registro financeiro da compra.
     private int idCompra;
@@ -60,7 +63,7 @@ public class Compra {
         setDataCompra(dataCompra);
         setStatus(status);
         setMetodoPagamento(metodoPagamento);
-        this.idCompra = contador++;
+        this.idCompra = CONTADOR.getAndIncrement();
     }
 
     /**
