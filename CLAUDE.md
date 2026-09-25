@@ -33,6 +33,7 @@ Sempre:
 
 Mudanças relevantes devem atualizar, quando aplicável:
 - `docs/STATUS.md`
+- `docs/AUDIT.md` (status dos achados)
 - `docs/ARCHITECTURE.md`
 - `docs/DATA_MODEL.md`
 - `docs/API.md`
@@ -56,19 +57,29 @@ Antes de remover algo:
 ## 6. Separação atual do projeto
 
 O FanVerse possui atualmente:
-- domínio acadêmico em Java;
-- frontend Vite na raiz;
-- API Node/Express;
-- catálogo JSON;
-- site HTML/CSS/JS legado em `site/`.
+- domínio acadêmico em Java (`src/**/*.java`) — independente da web;
+- frontend Vite na raiz — **interface principal** (DEC-006);
+- API Node/Express (`server.js`, `server/`);
+- catálogo JSON (`data/catalogo.json`) — **fonte de verdade**, contrato em `shared/catalog.js` (DEC-009);
+- site HTML/CSS/JS legado em `site/` — **congelado**, com `assets/js/data.js` **gerado** (não editar à mão).
 
-Não assumir que essas partes já formam uma única aplicação integrada.
+Não assumir que essas partes já formam uma única aplicação integrada. O Java **não** lê nem grava o JSON.
+
+Regras que protegem o que já foi corrigido (ver `docs/AUDIT.md`):
+- mudou o formato do catálogo? atualize `shared/catalog.js` e `docs/DATA_MODEL.md` juntos; mudança
+  incompatível sobe `SCHEMA_VERSION` com migração;
+- todo dado exibido via `innerHTML` passa por `esc()` / `safeImg()` (`src/app/views.js`);
+- nunca servir arquivos montando caminhos à mão no Express — só `express.static`;
+- "descartar/resetar" no frontend nunca escreve no servidor;
+- editou `data/catalogo.json`? rode `npm run sync:site-data`;
+- não versionar `node_modules/`, `dist/`, `out/` (DEC-005).
 
 ## 7. Validação
 
 Depois de alterações:
+- executar `npm run verify` (testes JS + build + testes Java) — é o que o CI roda;
 - executar `npm run build` para mudanças web quando possível;
-- executar a compilação Java quando houver mudança Java;
+- executar `npm run test:java` quando houver mudança Java;
 - verificar erros de console quando houver execução do frontend;
 - testar endpoints alterados;
 - documentar resultados reais, não resultados presumidos.

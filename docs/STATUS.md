@@ -1,96 +1,76 @@
 # FanVerse — Estado Atual
 
-**Data do levantamento:** 2026-09-24  
-**Branch de documentação:** `docs/project-baseline`  
-**Base analisada:** `main` no commit `8eacb09479340ff89998499e5182d0eb32d49392`
+**Atualizado em:** 2026-09-25 · **Branch:** `claude/loving-allen-5csmuk`
+**Fase:** 0 (baseline) concluída · 1 (estabilização) concluída · 2 (fundação) em andamento
 
 ## Resumo
 
-O FanVerse é atualmente um projeto híbrido que reúne um domínio acadêmico em Java e uma aplicação web baseada em Vite + JavaScript + CSS, apoiada por um servidor Node/Express e um catálogo JSON.
+O FanVerse é um projeto híbrido: domínio acadêmico em Java + aplicação web (Vite, JavaScript puro,
+Express, catálogo JSON) + um site estático legado em `site/`. Nesta rodada foi feita a auditoria
+completa (`docs/AUDIT.md`) e corrigidos os problemas que impediam funcionamento ou punham dados e
+segurança em risco. A web agora tem **uma fonte de verdade** (`data/catalogo.json`), um contrato
+validado dos dois lados e testes.
 
-Há também uma segunda interface em `site/`, composta por páginas HTML estáticas e seus próprios arquivos JavaScript/CSS.
+## Componentes
 
-## Componentes encontrados
+| Componente | Estado | Observação |
+|---|---|---|
+| Frontend Vite | ✅ Principal (DEC-006) | catálogo + editor; escape de HTML; estados de carregando/vazio/offline |
+| API Express | ✅ Ativa | contrato validado, erros padronizados, escrita protegida, ETag |
+| Catálogo JSON | ✅ Fonte de verdade | contrato v1 com `schemaVersion` |
+| Site `site/` | 🧊 Congelado | servido em `/site/`; dados gerados do JSON |
+| Domínio Java | ✅ Acadêmico | compila, roda, 12 testes; sem integração com a web |
+| Testes | ✅ 57 JS + 12 Java | `npm test`, `npm run test:java` |
+| CI | ✅ GitHub Actions | web + java |
+| Autenticação | ⚠️ Mínima | token de administrador (DEC-008), sem usuários |
+| Banco de dados | — | não necessário ainda |
+| Pagamento | — | compras só existem no Java, como modelo |
+| Artefatos versionados | ✅ Removidos | `node_modules/`, `dist/`, `out/` (DEC-005) |
 
-| Componente | Estado observado |
+## Verificações realizadas (resultados reais, 2026-09-25)
+
+| Verificação | Resultado |
 |---|---|
-| Modelo Java | Existe e possui várias classes de domínio |
-| Frontend Vite | Existe |
-| API Express | Existe |
-| Catálogo JSON | Existe |
-| Site estático `site/` | Existe |
-| Documentação | Existe, mas ainda era principalmente descritiva por arquivo |
-| Testes automatizados | Não identificados no levantamento inicial |
-| Banco de dados | Não identificado |
-| Autenticação | Não identificada |
-| Pagamento real | Não existe; compras são representações de domínio |
-| Integração Java ↔ API web | Não identificada como integração direta |
-| CI/CD documentado | Não identificado |
-| `node_modules/` versionado | Sim |
-| `out/` versionado | Sim |
-| `dist/` versionado | Sim |
+| `npm ci` (Linux) | ok · antes: `vite: Permission denied` com o `node_modules/` versionado |
+| `npm test` | 57/57 passam |
+| `npm run build` | ok (`dist/` ~23 kB JS, ~6 kB CSS) |
+| `npm run test:java` | 12/12 · o teste de unicidade **falha** no código antigo (código repetido) e passa no novo |
+| `npm run java:run` | ok, acentos corretos |
+| `npm run validate:data` / `check:site-data` | ok |
+| `npm run verify` | exit 0 |
+| Ataque de travessia (`curl --path-as-is /../../../../etc/hostname`) | antes 200 com o arquivo · agora 404 |
+| `PUT` sem token (com token configurado) / com token / `If-Match` velho | 401 / 200 / 412 |
+| Chromium — dev (`dev` + `dev:api`) | 4 livros; adicionar livro grava no arquivo (com `schemaVersion`), persiste após recarregar; `<b>` no título aparece como texto; erros por campo e foco no 1º inválido |
+| Chromium — `npm run build && npm start` | build servido com dados da API |
+| Chromium — build estático sem API | catálogo embutido (4 livros; antes caía em 2) + aviso; edição fica pendente e sobrevive ao recarregar |
+| Chromium — 375 px | menu visível, sem rolagem horizontal |
+| Chromium — 7 páginas do `site/` em `/site/` | todas renderizam, sem erro de JS |
+| `npm audit` | 2 avisos restantes, ambos do esbuild via Vite 5 (só servidor de dev) |
 
-## Fluxo web atual
+Console do navegador: os únicos erros vistos foram imagens do Unsplash bloqueadas pelo proxy do
+ambiente de verificação (`ERR_CERT_AUTHORITY_INVALID`) — não são do app.
 
-A aplicação web principal usa:
+## Problemas conhecidos e limitações
 
-`index.html` → `src/main.js` + `src/style.css`
+- **Vite 5 / esbuild (moderado, só dev):** corrigir exige Vite 6+ (major). Mitigado: dev em
+  `localhost` por padrão. Próximo item do roadmap.
+- **Editor em produção não envia token:** com o servidor exposto, edições pelo navegador ficam
+  locais até existir login. Edição remota hoje = `curl` com token.
+- **`site/` legado sem escape de HTML:** risco baixo (dados só do JSON versionado e validado), mas
+  real se o JSON for editado sem validação.
+- **Fluxo no navegador não tem teste automatizado no CI** (feito manualmente com Chromium headless).
+- **Scripts Java não executados no Windows** (feitos para isso; verificados só em Linux).
+- **Modelo Java ≠ modelo JSON** — documentado em DATA_MODEL, sem plano de sincronização.
 
-O frontend trabalha com catálogo local, API e dados de fallback.
+## Bloqueios
 
-O servidor usa Express e mantém `data/catalogo.json`.
+Nenhum técnico. Decisões que dependem do dono do projeto:
 
-## Fluxo Java atual
+1. mover o Java para `java/` (DEC-010, proposta);
+2. uso da pasta `livros md/`;
+3. se/quando portar as páginas do `site/` (leitor, loja, autor) para o Vite.
 
-`src/principal/Principal.java` cria objetos de:
-- livros digitais;
-- livros físicos;
-- usuário;
-- biblioteca;
-- coleção;
-- catálogo;
-- compra.
+## Próximo passo
 
-O fluxo também demonstra herança, polimorfismo, sobrecarga, encapsulamento e validações.
-
-## Pontos de atenção
-
-### 1. Múltiplas interfaces
-
-Existem duas abordagens web:
-- frontend Vite na raiz;
-- site estático em `site/`.
-
-Antes de consolidar ou remover uma delas, mapear dependências e objetivo de cada uma.
-
-### 2. Artefatos versionados
-
-A árvore atual contém `node_modules/`, `out/` e `dist/`. O `.gitignore` possui regras para alguns desses diretórios, mas os arquivos já aparecem versionados.
-
-Isso deve ser tratado como tarefa própria, não como efeito colateral de uma feature.
-
-### 3. Dados duplicados
-
-O catálogo existe em `data/catalogo.json`, enquanto o site estático possui dados próprios em `site/assets/js/data.js` e o frontend possui mecanismos de fallback.
-
-Isso pode gerar divergência de conteúdo.
-
-### 4. API simples
-
-A API atual persiste diretamente o catálogo JSON. Ainda não há indicação de banco de dados, autenticação ou controle de concorrência.
-
-### 5. Modelo Java e web
-
-O domínio Java e o catálogo web representam conceitos relacionados, mas não há evidência no estado atual de que o frontend consuma diretamente as classes Java.
-
-## Próxima fase
-
-A próxima fase deve ser de entendimento e planejamento, não de reescrita imediata:
-
-1. consolidar documentação;
-2. mapear arquitetura;
-3. mapear modelo de dados;
-4. mapear API;
-5. definir o papel do site legado;
-6. definir backlog;
-7. só então começar implementação incremental.
+Fase 2 do `docs/ROADMAP.md`: atualizar o Vite (fecha o aviso do esbuild), teste de navegador no CI e
+normalizar `status`/`availability` (schema v2).
