@@ -157,5 +157,8 @@ describe('addBook (caso de uso do editor)', () => {
     assert.equal(result.ok, false);
     assert.deepEqual(result.errors.map((e) => e.path), ['title', 'collectionTitle', 'description', 'price']);
     assert.equal(addBook(loadCatalog(), { ...input, price: -5 }).ok, false);
+    assert.deepEqual(addBook(loadCatalog(), { ...input, price: '' }).errors.map((e) => e.path), ['price']);
+    assert.deepEqual(addBook(loadCatalog(), { ...input, price: '   ' }).errors.map((e) => e.path), ['price']);
+    assert.equal(addBook(loadCatalog(), { ...input, price: '0' }).ok, true);
   });
 });

@@ -243,7 +243,9 @@ export function addBook(catalog, input, { now = new Date() } = {}) {
   const title = String(input?.title ?? '').trim();
   const collectionTitle = String(input?.collectionTitle ?? '').trim();
   const description = String(input?.description ?? '').trim();
-  const price = typeof input?.price === 'number' ? input.price : Number(String(input?.price ?? '').replace(',', '.'));
+  const rawPrice = typeof input?.price === 'number' ? input.price : String(input?.price ?? '').trim().replace(',', '.');
+  // Number('') é 0: preço vazio precisa ser recusado explicitamente, não virar "grátis".
+  const price = rawPrice === '' ? Number.NaN : Number(rawPrice);
 
   const errors = [];
   if (!title) errors.push({ path: 'title', message: 'Informe o título do livro.' });
