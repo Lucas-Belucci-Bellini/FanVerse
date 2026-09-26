@@ -1,109 +1,31 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+/**
+ * Ponto de entrada do servidor FanVerse (`npm start`).
+ *
+ * Serve a API do catálogo, o build do frontend Vite (`dist/`) em `/` e o site
+ * estático legado em `/site/`. A lógica fica em `server/app.js`.
+ *
+ * Variáveis de ambiente:
+ *   PORT                   porta HTTP (padrão 3000)
+ *   HOST                   interface (padrão 127.0.0.1; use 0.0.0.0 para expor na rede)
+ *   FANVERSE_DATA_PATH     arquivo do catálogo (padrão data/catalogo.json)
+ *   FANVERSE_ADMIN_TOKEN   token exigido no PUT /api/catalogo (sem ele, só loopback escreve)
+ */
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-const ROOT = __dirname;
-const DATA_PATH = path.join(ROOT, 'data', 'catalogo.json');
+import { createApp } from './server/app.js';
 
-const readCatalog = () => {
-  const raw = fs.readFileSync(DATA_PATH, 'utf-8');
-  return JSON.parse(raw);
-};
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 
-const writeCatalog = (catalog) => {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(catalog, null, 2));
-  return catalog;
-};
-
-app.use(express.json({ limit: '2mb' }));
-app.use('/assets', express.static(path.join(ROOT, 'site', 'assets')));
-app.use(express.static(path.join(ROOT, 'site')));
-app.use('/src', express.static(path.join(ROOT, 'src')));
-
-app.get('/api/catalogo', (req, res) => {
-  try {
-    const data = readCatalog();
-    res.json(data);
-  } catch (error) {
-    console.error('Erro ao ler catálogo:', error);
-    res.status(500).json({ message: 'Erro ao carregar catálogo.' });
-  }
+const app = createApp({
+  dataPath: process.env.FANVERSE_DATA_PATH || path.join(ROOT, 'data', 'catalogo.json'),
+  distDir: path.join(ROOT, 'dist'),
+  siteDir: path.join(ROOT, 'site'),
+  adminToken: process.env.FANVERSE_ADMIN_TOKEN || undefined,
 });
 
-app.put('/api/catalogo', (req, res) => {
-  try {
-    const payload = req.body;
-
-    if (!payload || !Array.isArray(payload.collections)) {
-      return res.status(400).json({ message: 'Payload inválido para o catálogo.' });
-    }
-
-    const updated = writeCatalog(payload);
-    return res.json({ message: 'Catálogo atualizado com sucesso.', catalog: updated });
-  } catch (error) {
-    console.error('Erro ao gravar catálogo:', error);
-    return res.status(500).json({ message: 'Erro ao salvar o catálogo.' });
-  }
-});
-
-app.get('/api/catalogo/books', (req, res) => {
-  try {
-    const data = readCatalog();
-    const books = data.collections.flatMap((collection) =>
-      collection.arcs.flatMap((arc) => arc.books.map((book) => ({
-        ...book,
-        collectionId: collection.id,
-        collectionTitle: collection.title,
-        arcId: arc.id,
-        arcTitle: arc.title
-      })))
-    );
-    res.json(books);
-  } catch (error) {
-    console.error('Erro ao listar livros:', error);
-    res.status(500).json({ message: 'Erro ao listar livros.' });
-  }
-});
-
-app.get('/api/catalogo/book/:id', (req, res) => {
-  const books = readCatalog().collections.flatMap((collection) =>
-    collection.arcs.flatMap((arc) => arc.books.map((book) => ({
-      ...book,
-      collectionId: collection.id,
-      collectionTitle: collection.title,
-      arcId: arc.id,
-      arcTitle: arc.title
-    })))
-  );
-
-  const book = books.find((item) => item.id === req.params.id);
-  if (!book) {
-    return res.status(404).json({ message: 'Livro não encontrado.' });
-  }
-
-  return res.json(book);
-});
-
-app.get('/api/catalogo/collection/:id', (req, res) => {
-  const data = readCatalog();
-  const collection = data.collections.find((item) => item.id === req.params.id);
-  if (!collection) {
-    return res.status(404).json({ message: 'Coleção não encontrada.' });
-  }
-  return res.json(collection);
-});
-
-app.get('*', (req, res) => {
-  const safePath = req.path === '/' ? '/index.html' : req.path;
-  const filePath = path.join(ROOT, 'site', safePath);
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    return res.sendFile(filePath);
-  }
-  res.sendFile(path.join(ROOT, 'site', 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`FanVerse server running at http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`FanVerse server running at http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
 });

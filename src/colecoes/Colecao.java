@@ -10,6 +10,7 @@ package colecoes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import livros.Livro;
 
@@ -22,6 +23,8 @@ public class Colecao {
     private String autor;
     // Identificador único da coleção.
     private String identificador;
+    // Sequência compartilhada: identificadores distintos na mesma execução (antes era aleatório).
+    private static final AtomicInteger SEQUENCIA = new AtomicInteger(1);
     // Lista dos livros pertencentes a esta coleção.
     private List<Livro> livros;
 
@@ -36,7 +39,7 @@ public class Colecao {
         setNome(nome);
         setDescricao(descricao);
         setAutor(autor);
-        this.identificador = "COL-" + ((int) (Math.random() * 9000) + 1000);
+        this.identificador = String.format("COL-%04d", SEQUENCIA.getAndIncrement());
         this.livros = new ArrayList<>();
     }
 

@@ -342,10 +342,101 @@ button, input, textarea {
   }
 
   .nav-links {
-    display: none;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.95rem;
   }
 
   .hero-copy h1 {
     font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+}
+
+/* ---- Estados da interface (carregando, vazio, aviso de origem, erros de formulário) ---- */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.button[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice-warning {
+  border-color: rgba(244, 208, 125, 0.45);
+}
+
+.notice-info {
+  border-color: rgba(124, 156, 255, 0.4);
+}
+
+.notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.field-error {
+  color: #ffb4b4;
+  font-size: 0.9rem;
+}
+
+.catalog-form [aria-invalid="true"] {
+  border-color: rgba(255, 125, 125, 0.7);
+}
+
+.form-message {
+  margin: 18px 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.form-message-success {
+  border-color: rgba(95, 227, 180, 0.5);
+  color: #9cf7d2;
+}
+
+.form-message-info {
+  border-color: rgba(124, 156, 255, 0.45);
+}
+
+.form-message-warning {
+  border-color: rgba(244, 208, 125, 0.5);
+  color: var(--gold);
+}
+
+.form-message-error {
+  border-color: rgba(255, 125, 125, 0.5);
+  color: #ffb4b4;
+}
+
+.empty-state {
+  color: var(--muted);
+  padding: 24px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
