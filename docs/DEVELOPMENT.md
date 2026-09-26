@@ -124,6 +124,17 @@ java "-Dstdout.encoding=UTF-8" -cp out principal.Principal
 - **web:** `npm ci` → `validate:data` → `npm test` → `build`;
 - **java:** `test:java` → `java:run`.
 
+## Deploy (Vercel)
+
+O repositório está ligado ao projeto `fan-verse` no Vercel, que roda `npm run build` e publica o
+`dist/` como site **estático**: cada push gera um preview, e o `main` vai para produção.
+
+- Não há API no Vercel. O frontend mostra o catálogo embutido no build (`data/catalogo.json` no
+  momento do build) e avisa que o servidor está indisponível; edições ficam só no navegador.
+- Para publicar uma mudança de catálogo no Vercel: edite `data/catalogo.json`, valide e faça push.
+- Até a remoção do `node_modules/` versionado (DEC-005), todo build no Vercel falhava com
+  `vite: Permission denied`.
+
 ## Validação mínima antes de um PR
 
 ```bash

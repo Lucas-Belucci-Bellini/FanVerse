@@ -79,7 +79,7 @@ avisam.
 |---|---|---|
 | `npm run dev` + `npm run dev:api` | Vite 5173 com proxy `/api` → Express 3000 | fluxo de desenvolvimento |
 | `npm run build && npm start` | Express 3000 serve `dist/` + API + `site/` | "produção" local, uma origem só |
-| hospedagem estática do `dist/` | só o frontend | sem API: mostra o catálogo embutido; edições ficam locais |
+| hospedagem estática do `dist/` (é o que o **Vercel**, projeto `fan-verse`, faz: `npm run build` → `dist/`) | só o frontend | sem API: mostra o catálogo embutido; edições ficam locais |
 
 ## 6. Limites atuais (o que **não** assumir)
 

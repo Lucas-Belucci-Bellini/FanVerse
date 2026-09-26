@@ -46,11 +46,14 @@ validado dos dois lados e testes.
 | Chromium — 375 px | menu visível, sem rolagem horizontal |
 | Chromium — 7 páginas do `site/` em `/site/` | todas renderizam, sem erro de JS |
 | `npm audit` | 2 avisos restantes, ambos do esbuild via Vite 5 (só servidor de dev) |
+| Vercel (projeto `fan-verse`) | produção do `main`: **nenhum deploy READY** — todos em ERROR por `vite: Permission denied` (o `node_modules/` versionado). Previews desta branch: READY desde o 1º commit (`1b5fa06`); o preview serve o mesmo `index.html`/CSS do build local |
 
 Console do navegador: os únicos erros vistos foram imagens do Unsplash bloqueadas pelo proxy do
 ambiente de verificação (`ERR_CERT_AUTHORITY_INVALID`) — não são do app.
 
 ## Problemas conhecidos e limitações
+
+- **O site no Vercel só volta a ter produção quando este trabalho entrar no `main`.** O Vercel hospeda o `dist/` como site estático, sem a API: mostra o catálogo embutido no build, e as edições feitas no navegador ficam só nele.
 
 - **Vite 5 / esbuild (moderado, só dev):** corrigir exige Vite 6+ (major). Mitigado: dev em
   `localhost` por padrão. Próximo item do roadmap.

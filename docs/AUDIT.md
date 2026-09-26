@@ -21,7 +21,7 @@ eram de arquitetura, e sim de **segurança e integridade de dados**:
 | D-01 | Botão **"Resetar"** sobrescrevia o catálogo real do servidor (4 livros → 2) | Crítica | ✅ |
 | S-02 | `PUT /api/catalogo` aceitava qualquer JSON, **sem autenticação** | Alta | ✅ |
 | S-03 | XSS armazenado: todo campo do catálogo ia para `innerHTML` sem escape | Alta | ✅ |
-| I-01 | `node_modules/` versionado (só binários Windows) **quebrava o build no Linux** | Alta | ✅ |
+| I-01 | `node_modules/` versionado (só binários Windows) **quebrava o build no Linux — e todo deploy de produção no Vercel** | Alta | ✅ |
 | D-02 | Frontend preso ao `localStorage`: nunca via atualizações do servidor | Alta | ✅ |
 | D-03 | Em dev e no build publicado o frontend **nunca lia a API nem o JSON** | Alta | ✅ |
 
@@ -145,7 +145,7 @@ Java  ──▶ nada (apenas System.out; não lê nem grava o JSON)
 
 | ID | Achado | Status |
 |---|---|---|
-| I-01 | `node_modules/` versionado com binários Windows → `sh: vite: Permission denied` no Linux | ✅ Removido do Git (DEC-005) |
+| I-01 | `node_modules/` versionado com binários Windows → `sh: vite: Permission denied` no Linux. **Mesmo erro no Vercel:** os deploys de produção do `main` (`8b26c70`, `dc9a6a8`, `8eacb09`) terminaram em ERROR com `node_modules/.bin/vite: Permission denied` e o projeto `fan-verse` não tem nenhum deploy de produção READY. | ✅ Removido do Git (DEC-005). Os previews da branch ficam READY desde `1b5fa06` e servem o mesmo build testado localmente. |
 | I-02 | `dist/` e `out/` versionados e desatualizados | ✅ Removidos; `.gitignore` ampliado |
 | I-03 | Nenhum teste | ✅ 57 testes JS (`node --test`, sem dependência nova) + 12 Java |
 | I-04 | Nenhum CI | ✅ `.github/workflows/ci.yml` |
