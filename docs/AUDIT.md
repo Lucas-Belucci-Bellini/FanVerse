@@ -83,7 +83,7 @@ Java  ──▶ nada (apenas System.out; não lê nem grava o JSON)
 | **S-03** | `main.js` e `site/app.js` interpolavam título, descrição, capa etc. em `innerHTML`. Com S-02, qualquer pessoa podia gravar `<img onerror>`. | ✅ no frontend principal (escape + URL de capa validada; teste de XSS). 🟡 `site/` legado: dados agora vêm só do JSON versionado e validado; o escape não foi portado (congelado, DEC-006). |
 | **S-04** | `/src` servido estaticamente: `GET /src/livros/Livro.java` → 200. | ✅ Removido. |
 | **S-05** | JSON malformado respondia página HTML com stack trace e caminho absoluto (`/home/user/FanVerse/node_modules/...`). | ✅ Handler de erro único; resposta JSON sem detalhes internos. |
-| **S-06** | `npm audit`: `qs` (DoS, via express) e `esbuild ≤0.24.2` (via Vite 5: sites maliciosos leem respostas do **servidor de dev**). O dev server era exposto em `0.0.0.0` por padrão. | ✅ `qs`/express atualizados. 🟡 esbuild: exige Vite 6+ (major); mitigado com dev em `localhost` por padrão (`dev:lan` para expor). ⏳ upgrade do Vite. |
+| **S-06** | `npm audit`: `qs` (DoS, via express) e `esbuild ≤0.24.2` (via Vite 5: sites maliciosos leem respostas do **servidor de dev**). O dev server era exposto em `0.0.0.0` por padrão. | ✅ `qs`/express atualizados; Vite 5 → **6.4.3** (esbuild 0.25), `npm audit` = 0. Dev também passou a escutar só em `localhost` por padrão (`dev:lan` para expor). |
 | S-07 | Segredos/credenciais no código | ℹ️ Nenhum encontrado (varredura por `token`, `secret`, `password`, `key`, `.env`). |
 
 ---

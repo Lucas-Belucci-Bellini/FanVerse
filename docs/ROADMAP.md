@@ -32,7 +32,7 @@ Legenda: ✅ concluído · 🔜 próximo · ⏳ futuro · 🚧 bloqueado (depend
 - [x] `site/assets/js/data.js` gerado e checado (D-04)
 - [x] 57 testes JS + 12 testes Java; CI no GitHub Actions (I-03, I-04)
 - [x] Comandos oficiais verificados e portáteis (J-09)
-- [ ] 🔜 Atualizar Vite 5 → 6+ e fechar o aviso do esbuild (S-06)
+- [x] Atualizar Vite 5 → 6.4.3 e fechar o aviso do esbuild — `npm audit` = 0 (S-06)
 - [ ] 🔜 Teste de navegador no CI (Playwright) para o fluxo abrir → adicionar → recarregar
 - [ ] 🔜 Schema v2: normalizar `status`/`availability` em enums, com migração (D-09)
 - [ ] ⏳ Lint (ESLint) com regras mínimas acordadas (I-05)
