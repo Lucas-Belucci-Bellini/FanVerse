@@ -25,7 +25,7 @@ eram de arquitetura, e sim de **segurança e integridade de dados**:
 | D-02 | Frontend preso ao `localStorage`: nunca via atualizações do servidor | Alta | ✅ |
 | D-03 | Em dev e no build publicado o frontend **nunca lia a API nem o JSON** | Alta | ✅ |
 
-Depois da rodada: 69 testes automatizados (57 JS + 12 Java), CI no GitHub Actions, validação do
+Depois da rodada: 74 testes automatizados (57 JS + 5 de ponta a ponta no navegador + 12 Java), CI no GitHub Actions, validação do
 contrato do catálogo no servidor e no cliente, e documentação alinhada ao código.
 
 ---
@@ -147,7 +147,7 @@ Java  ──▶ nada (apenas System.out; não lê nem grava o JSON)
 |---|---|---|
 | I-01 | `node_modules/` versionado com binários Windows → `sh: vite: Permission denied` no Linux. **Mesmo erro no Vercel:** os deploys de produção do `main` (`8b26c70`, `dc9a6a8`, `8eacb09`) terminaram em ERROR com `node_modules/.bin/vite: Permission denied` e o projeto `fan-verse` não tem nenhum deploy de produção READY. | ✅ Removido do Git (DEC-005). Os previews da branch ficam READY desde `1b5fa06` e servem o mesmo build testado localmente. |
 | I-02 | `dist/` e `out/` versionados e desatualizados | ✅ Removidos; `.gitignore` ampliado |
-| I-03 | Nenhum teste | ✅ 57 testes JS (`node --test`, sem dependência nova) + 12 Java |
+| I-03 | Nenhum teste | ✅ 57 testes JS (`node --test`) + 5 de ponta a ponta no navegador (playwright-core) + 12 Java |
 | I-04 | Nenhum CI | ✅ `.github/workflows/ci.yml` |
 | I-05 | Sem lint/formatter | ⏳ Avaliar ESLint (Fase 2) — não adicionado para não criar dependência sem regra acordada |
 | I-06 | TODO/FIXME no código | ℹ️ Nenhum encontrado |

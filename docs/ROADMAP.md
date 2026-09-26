@@ -33,8 +33,8 @@ Legenda: ✅ concluído · 🔜 próximo · ⏳ futuro · 🚧 bloqueado (depend
 - [x] 57 testes JS + 12 testes Java; CI no GitHub Actions (I-03, I-04)
 - [x] Comandos oficiais verificados e portáteis (J-09)
 - [x] Atualizar Vite 5 → 6.4.3 e fechar o aviso do esbuild — `npm audit` = 0 (S-06)
-- [ ] 🔜 Teste de navegador no CI (Playwright) para o fluxo abrir → adicionar → recarregar
-- [ ] 🔜 Schema v2: normalizar `status`/`availability` em enums, com migração (D-09)
+- [x] Teste de navegador no CI (playwright-core + Chrome do runner): abrir → adicionar → recarregar, formulário, 375 px, modo sem API (DEC-011)
+- [ ] 🚧 Schema v2: normalizar `status`/`availability` em enums, com migração (D-09) — precisa do dono definir o significado de cada valor
 - [ ] ⏳ Lint (ESLint) com regras mínimas acordadas (I-05)
 - [ ] 🚧 Mover o Java para `java/` (DEC-010 — aguarda o dono)
 

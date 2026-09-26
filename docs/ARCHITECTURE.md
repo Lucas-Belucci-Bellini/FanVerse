@@ -53,7 +53,7 @@ APIs do Node — é o que permite rodar a mesma regra no navegador, no Express e
 | `server.js` | Lê variáveis de ambiente e faz `listen` | manual (`npm start`) |
 | `src/app/catalog-store.js` | Origem dos dados no navegador (API → cache → embutido), pendências, migração da chave antiga | `test/frontend.test.js` |
 | `src/app/views.js` | Renderização em string, escape, estados de UI | `test/frontend.test.js` |
-| `src/main.js` | Bootstrap, estado da tela, eventos (delegados) | Chromium (manual; ver STATUS) |
+| `src/main.js` | Bootstrap, estado da tela, eventos (delegados) | `e2e/app.e2e.js` (navegador real) |
 | `scripts/sync-site-data.mjs` | Gera `site/assets/js/data.js` | `test/site-data.test.js` |
 | `scripts/validate-data.mjs` | Valida `data/catalogo.json` | CI |
 | `scripts/java.mjs` | Compila/executa/testa o Java em qualquer SO | CI |

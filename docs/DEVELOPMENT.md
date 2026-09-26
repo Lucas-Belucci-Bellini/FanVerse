@@ -30,6 +30,7 @@ npm ci        # instala exatamente o package-lock.json (use `npm install` só pa
 | `npm run preview` | Serve o `dist/` em http://localhost:4173 (também repassa `/api`) |
 | `npm start` | Servidor de "produção": `dist/` em `/`, API em `/api`, site legado em `/site/` |
 | `npm test` | Testes JS (`node --test`: contrato, API, frontend, dados do `site/`) |
+| `npm run test:e2e` | Build + teste de ponta a ponta num navegador real (`e2e/app.e2e.js`) — precisa de Chrome/Chromium instalado |
 | `npm run validate:data` | Confere `data/catalogo.json` contra o contrato |
 | `npm run sync:site-data` | Regenera `site/assets/js/data.js` a partir do JSON |
 | `npm run check:site-data` | Falha se `site/assets/js/data.js` estiver desatualizado |
@@ -115,13 +116,20 @@ java "-Dstdout.encoding=UTF-8" -cp out principal.Principal
   (ex.: "descartar alterações locais NUNCA escreve no servidor").
 - A API é testada de ponta a ponta numa porta efêmera com uma cópia temporária do catálogo — o
   `data/catalogo.json` real nunca é tocado.
-- Ainda não automatizado: o fluxo no navegador (feito com Chromium headless nesta rodada; ver STATUS).
+- **Ponta a ponta** (`npm run test:e2e`): sobe o servidor real servindo o `dist/` e usa um navegador
+  de verdade (playwright-core) para abrir o catálogo, adicionar livro, recarregar, validar o formulário,
+  testar 375 px e o modo sem API. Não baixa navegador: usa o Google Chrome instalado
+  (`FANVERSE_E2E_CHANNEL`, padrão `chrome`) ou o executável em `FANVERSE_E2E_BROWSER`:
+
+  ```bash
+  FANVERSE_E2E_BROWSER=/caminho/para/chromium npm run test:e2e
+  ```
 
 ## Integração contínua
 
 `.github/workflows/ci.yml` roda em push para `main` e em todo PR:
 
-- **web:** `npm ci` → `validate:data` → `npm test` → `build`;
+- **web:** `npm ci` → `validate:data` → `npm test` → `test:e2e` (build + navegador, com o Chrome do runner);
 - **java:** `test:java` → `java:run`.
 
 ## Deploy (Vercel)

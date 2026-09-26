@@ -77,7 +77,7 @@ Regras que protegem o que já foi corrigido (ver `docs/AUDIT.md`):
 ## 7. Validação
 
 Depois de alterações:
-- executar `npm run verify` (testes JS + build + testes Java) — é o que o CI roda;
+- executar `npm run verify` (testes JS + build + testes Java); o CI roda isso **e** `npm run test:e2e` (navegador real);
 - executar `npm run build` para mudanças web quando possível;
 - executar `npm run test:java` quando houver mudança Java;
 - verificar erros de console quando houver execução do frontend;

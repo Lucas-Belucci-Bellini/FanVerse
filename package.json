@@ -17,6 +17,7 @@
     "start": "node server.js",
     "server": "node server.js",
     "test": "node --test",
+    "test:e2e": "vite build && node --test e2e/app.e2e.js",
     "validate:data": "node scripts/validate-data.mjs",
     "sync:site-data": "node scripts/sync-site-data.mjs",
     "check:site-data": "node scripts/sync-site-data.mjs --check",
@@ -29,6 +30,7 @@
     "express": "^4.22.3"
   },
   "devDependencies": {
+    "playwright-core": "^1.63.0",
     "vite": "^6.4.3"
   }
 }

@@ -20,7 +20,7 @@ validado dos dois lados e testes.
 | Catálogo JSON | ✅ Fonte de verdade | contrato v1 com `schemaVersion` |
 | Site `site/` | 🧊 Congelado | servido em `/site/`; dados gerados do JSON |
 | Domínio Java | ✅ Acadêmico | compila, roda, 12 testes; sem integração com a web |
-| Testes | ✅ 57 JS + 12 Java | `npm test`, `npm run test:java` |
+| Testes | ✅ 57 JS + 5 e2e + 12 Java | `npm test`, `npm run test:e2e`, `npm run test:java` |
 | CI | ✅ GitHub Actions | web + java |
 | Autenticação | ⚠️ Mínima | token de administrador (DEC-008), sem usuários |
 | Banco de dados | — | não necessário ainda |
@@ -46,6 +46,7 @@ validado dos dois lados e testes.
 | Chromium — 375 px | menu visível, sem rolagem horizontal |
 | Chromium — 7 páginas do `site/` em `/site/` | todas renderizam, sem erro de JS |
 | `npm audit` | 0 vulnerabilidades (após Vite 5 → 6.4.3; antes: 2 avisos do esbuild via Vite 5) |
+| `npm run test:e2e` | 5/5 em ~5 s · com o escape de HTML desligado de propósito, falha no teste de XSS (o teste pega a regressão) |
 | Chromium com Vite 6 | dev + API, preview + API e build estático sem API: mesmos resultados do Vite 5 |
 | Vercel (projeto `fan-verse`) | produção do `main`: **nenhum deploy READY** — todos em ERROR por `vite: Permission denied` (o `node_modules/` versionado). Previews desta branch: READY desde o 1º commit (`1b5fa06`); o preview serve o mesmo `index.html`/CSS do build local |
 
@@ -60,7 +61,6 @@ ambiente de verificação (`ERR_CERT_AUTHORITY_INVALID`) — não são do app.
   locais até existir login. Edição remota hoje = `curl` com token.
 - **`site/` legado sem escape de HTML:** risco baixo (dados só do JSON versionado e validado), mas
   real se o JSON for editado sem validação.
-- **Fluxo no navegador não tem teste automatizado no CI** (feito manualmente com Chromium headless).
 - **Scripts Java não executados no Windows** (feitos para isso; verificados só em Linux).
 - **Modelo Java ≠ modelo JSON** — documentado em DATA_MODEL, sem plano de sincronização.
 
@@ -74,5 +74,5 @@ Nenhum técnico. Decisões que dependem do dono do projeto:
 
 ## Próximo passo
 
-Fase 2 do `docs/ROADMAP.md`: teste de navegador no CI e normalizar `status`/`availability`
-(schema v2).
+Fase 2 do `docs/ROADMAP.md`: normalizar `status`/`availability` (schema v2) — depende de você
+definir o significado de cada valor — e lint.

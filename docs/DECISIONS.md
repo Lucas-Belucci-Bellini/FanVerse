@@ -162,3 +162,25 @@ continua sendo decisão futura.
 podem depender dos caminhos atuais. `scripts/java.mjs` concentra os caminhos para facilitar a mudança.
 
 **Consequências esperadas:** atualizar `scripts/java.mjs`, README e docs; nenhum impacto na web.
+
+## DEC-011 — Teste de ponta a ponta com playwright-core, sem baixar navegador
+
+**Data:** 2026-09-26 · **Status:** Aceita e implementada
+
+**Contexto:** os fluxos no navegador (adicionar livro, recarregar, modo sem API, XSS) eram verificados
+à mão com Chromium headless; nada impedia uma regressão de voltar.
+
+**Problema:** testes em Node cobrem a lógica, mas não a integração real entre HTML, eventos,
+`localStorage`, `fetch` e o servidor.
+
+**Alternativas:** (a) `@playwright/test` (runner próprio + download de ~150 MB de navegadores no
+install/CI); (b) jsdom (não é navegador: sem layout, sem rede real); (c) `playwright-core` com o
+`node:test` que o projeto já usa, dirigindo um Chrome/Chromium já instalado.
+
+**Decisão:** (c). Uma única devDependency, sem script de instalação e sem download. No CI usa o Google
+Chrome que vem no runner do GitHub (`FANVERSE_E2E_CHANNEL=chrome`); localmente, o Chrome instalado ou
+`FANVERSE_E2E_BROWSER`. Capas externas são respondidas com uma imagem local para o teste não depender
+de rede.
+
+**Consequências:** `npm run test:e2e` exige um Chrome/Chromium na máquina; por isso fica fora do
+`npm run verify` e roda no CI. Se o runner deixar de trazer o Chrome, basta instalar um no workflow.
