@@ -1,0 +1,3 @@
+# FanVerse — prompt de engenharia
+
+Leia README, estrutura, manifests e arquitetura. Confirme o que está realmente integrado entre domínio Java e web; não invente endpoints ou funcionalidades. Separe regras de biblioteca (livros, usuários, empréstimos, coleções, compras e limites) da apresentação. Preserve invariantes, valide entradas e reporte divergências entre backend e demo como lacunas. Descubra comandos/testes reais e adicione regressões para comportamento alterado. Distinga teste unitário, build e fluxo integrado. Mantenha dependências enxutas, atualize contratos/docs e preserve diffs locais. Não exponha segredos; informe evidências e limitações.
