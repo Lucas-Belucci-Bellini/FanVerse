@@ -1,6 +1,8 @@
-    # Documentação detalhada dos arquivos
+# Documentação detalhada dos arquivos
 
 Este documento explica a finalidade de cada arquivo principal do projeto, com foco na estrutura atual em Java, Vite e catálogo dinâmico.
+
+> Arquitetura, contrato de dados e API detalhados: `ARCHITECTURE.md`, `DATA_MODEL.md` e `API.md`. Comandos: `DEVELOPMENT.md`.
 
 ## 1. Arquivos de configuração e entrada do projeto
 
@@ -9,18 +11,20 @@ Este documento explica a finalidade de cada arquivo principal do projeto, com fo
 Função:
 - define as dependências do projeto;
 - guarda os scripts de desenvolvimento, build e execução;
-- configura o ambiente do Vite e do Express.
+- declara o projeto como ESM (`"type": "module"`) e exige Node 20+.
 
-Pontos-chave:
-- `npm run dev`: inicia o ambiente de desenvolvimento do Vite;
-- `npm run build`: gera a build de produção;
-- `npm start`: inicia o servidor Express.
+Pontos-chave (lista completa em `DEVELOPMENT.md`):
+- `npm run dev` + `npm run dev:api`: frontend Vite e API em desenvolvimento;
+- `npm run build`: gera a build de produção em `dist/`;
+- `npm start`: inicia o servidor Express (build + API + site legado);
+- `npm test` / `npm run test:java` / `npm run verify`: testes.
 
 ### [vite.config.js](../vite.config.js)
 
 Função:
 - configura a aplicação Vite;
-- define host e porta do servidor de desenvolvimento;
+- define as portas do servidor de desenvolvimento e do preview;
+- repassa `/api` para o Express (`FANVERSE_API_URL`, padrão `http://localhost:3000`);
 - define a pasta de saída `dist`.
 
 ### [index.html](../index.html)
@@ -33,7 +37,7 @@ Função:
 ### [.gitignore](../.gitignore)
 
 Função:
-- evita que arquivos de instalação e build sejam enviados ao Git;
+- evita que `node_modules/`, `dist/`, `out/` e arquivos de editor sejam enviados ao Git (DEC-005);
 - mantém o repositório limpo e mais leve.
 
 ## 2. Arquivos da camada web moderna
@@ -41,18 +45,28 @@ Função:
 ### [src/main.js](../src/main.js)
 
 Função:
-- é o coração da interface atual do FanVerse;
-- renderiza o catálogo, a hero section e o editor de catálogo;
-- lê os dados do catálogo;
-- salva alterações no navegador em `localStorage`;
-- manteve a lógica Java sem ser alterada.
+- ponto de entrada da interface principal (DEC-006);
+- guarda o estado da tela e trata os eventos (salvar livro, enviar/descartar alterações locais);
+- não altera a lógica Java.
 
-Responsabilidades principais:
-- carregar o catálogo;
-- montar a página com os cards dos livros;
-- criar o formulário de edição;
-- inserir novas coleções e livros;
-- resetar o catálogo local.
+### [src/app/catalog-store.js](../src/app/catalog-store.js)
+
+Função:
+- decide de onde o catálogo vem: alterações locais pendentes → API → cache → catálogo embutido no build;
+- salva no navegador e envia à API com `If-Match`;
+- "Descartar alterações locais" limpa só o navegador — nunca escreve no servidor (DEC-007).
+
+### [src/app/views.js](../src/app/views.js)
+
+Função:
+- monta o HTML da página (hero, métricas, cards, editor, avisos);
+- escapa todo dado do catálogo antes de ir para a tela (proteção contra XSS).
+
+### [shared/catalog.js](../shared/catalog.js)
+
+Função:
+- contrato do catálogo usado pelo servidor e pelo frontend (DEC-009);
+- `validateCatalog`, `addBook` (regra do editor), `flattenBooks`, `findBook`, `findCollection`.
 
 ### [src/style.css](../src/style.css)
 
@@ -61,12 +75,13 @@ Função:
 - aplica layout, cores, cards, hero section, métricas, botões e responsividade;
 - controla a identidade visual do front-end.
 
-### [server.js](../server.js)
+### [server.js](../server.js) e [server/](../server/)
 
 Função:
-- serve o site e expõe API REST para o catálogo;
-- lê e grava o JSON do catálogo em `data/catalogo.json`;
-- permite integração com um front-end ou sistema futuro sem mexer no Java.
+- `server.js` lê as variáveis de ambiente e inicia o servidor;
+- `server/app.js` define as rotas, a proteção da escrita e os arquivos estáticos (`dist/` em `/`, `site/` em `/site/`);
+- `server/catalog-repository.js` lê e grava `data/catalogo.json` de forma atômica, com ETag;
+- `server/errors.js` padroniza as respostas de erro.
 
 Endpoints principais:
 - `GET /api/catalogo`
@@ -74,6 +89,7 @@ Endpoints principais:
 - `GET /api/catalogo/books`
 - `GET /api/catalogo/book/:id`
 - `GET /api/catalogo/collection/:id`
+- `GET /api/health`
 
 ## 3. Arquivos de dados
 
@@ -84,7 +100,8 @@ Função:
 - funciona como base de dados leve para a interface web;
 - separa o conteúdo do site da lógica Java.
 
-Estrutura principal:
+Estrutura principal (contrato completo em `DATA_MODEL.md`):
+- `schemaVersion`
 - `author`
 - `collections`
 - `arcs`
@@ -121,7 +138,7 @@ Função:
 ### [src/livros/CodigoLivro.java](../src/livros/CodigoLivro.java)
 
 Função:
-- representa o identificador do livro;
+- representa o identificador do livro (`LIV-0001`, `LIV-0002`…, sequencial e único na execução);
 - demonstra composição dentro da classe `Livro`.
 
 ### [src/usuarios/Usuario.java](../src/usuarios/Usuario.java)
@@ -331,6 +348,7 @@ Observações:
 
 ### [site/assets/js/data.js](../site/assets/js/data.js)
 Função:
+- **arquivo gerado** a partir de `data/catalogo.json` por `npm run sync:site-data` — não editar à mão;
 - armazena os dados estruturados usados pelo front-end estático;
 - alimenta as páginas com informações de livros, coleções, autor e arcos.
 
@@ -347,8 +365,9 @@ Função:
 ## 6. Observações de manutenção
 
 - O projeto foi estruturado para separar domínio e apresentação.
-- O Java continua sendo a lógica de negócio, enquanto o HTML/CSS/JS controlam a experiência visual e interativa.
-- Os arquivos em `site/` são úteis como referência do front-end estático, mas a base atual de desenvolvimento é o frontend Vite em `src/`.
+- O Java é o modelo de domínio acadêmico e roda à parte; as regras da web ficam em `shared/catalog.js` e não são geradas a partir do Java (ver `DATA_MODEL.md`).
+- Os arquivos em `site/` são referência do front-end estático (congelado, DEC-006); a base atual de desenvolvimento é o frontend Vite em `src/`.
+- Testes ficam em `test/` (JS) e `test/java/` (Java); scripts de apoio em `scripts/`.
 - O CSS é compartilhado e precisa ser revisado com atenção para evitar sobrescrita de classes em páginas diferentes.
 - A documentação por arquivo reduz o risco de regressões e facilita a manutenção acadêmica e profissional.
 

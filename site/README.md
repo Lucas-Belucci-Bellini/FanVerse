@@ -37,7 +37,7 @@ site/
 
 ## JavaScript
 
-`assets/js/data.js` guarda os dados usados pelo site estático.
+`assets/js/data.js` guarda os dados usados pelo site estático. **É gerado** a partir de `data/catalogo.json` com `npm run sync:site-data` — não edite à mão (um teste falha se ficar desatualizado).
 
 `assets/js/app.js` usa esses dados para preencher as páginas, montar cards e controlar parte da navegação e dos filtros.
 
@@ -59,8 +59,8 @@ Depois:
 http://localhost:8000/site/
 ```
 
-Também é possível usar o servidor Node do projeto quando a integração com a API for necessária.
+Com o servidor do projeto (`npm start`), o site fica em `http://localhost:3000/site/`. Links antigos na raiz (`/catalogo.html`) redirecionam para lá.
 
 ## Observação
 
-Essa pasta não é a mesma coisa que o front-end Vite da raiz. O Vite usa principalmente `index.html`, `src/main.js` e `src/style.css`.
+Essa pasta não é a mesma coisa que o front-end Vite da raiz, que é a interface principal. O `site/` está **congelado** (DEC-006): serve de referência de produto para portar leitor, loja e autor ao Vite, e não recebe funcionalidade nova.

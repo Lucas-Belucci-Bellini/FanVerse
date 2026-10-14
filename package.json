@@ -3,18 +3,34 @@
   "version": "1.0.0",
   "private": true,
   "description": "FanVerse platform with Java library base and Vite-powered frontend",
+  "type": "module",
   "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 5173",
+    "dev": "vite",
+    "dev:lan": "vite --host 0.0.0.0",
+    "dev:api": "node --watch server.js",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "preview": "vite preview",
     "start": "node server.js",
-    "server": "node server.js"
+    "server": "node server.js",
+    "test": "node --test",
+    "test:e2e": "vite build && node --test e2e/app.e2e.js",
+    "validate:data": "node scripts/validate-data.mjs",
+    "sync:site-data": "node scripts/sync-site-data.mjs",
+    "check:site-data": "node scripts/sync-site-data.mjs --check",
+    "java:build": "node scripts/java.mjs build",
+    "java:run": "node scripts/java.mjs run",
+    "test:java": "node scripts/java.mjs test",
+    "verify": "npm test && npm run build && npm run test:java"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.22.3"
   },
   "devDependencies": {
-    "vite": "^5.4.10"
+    "playwright-core": "^1.63.0",
+    "vite": "^6.4.3"
   }
 }

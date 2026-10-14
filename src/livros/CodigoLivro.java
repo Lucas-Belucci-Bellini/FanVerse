@@ -8,20 +8,27 @@
  */
 package livros;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class CodigoLivro {
+    // Sequência compartilhada: garante códigos distintos dentro da mesma execução.
+    private static final AtomicInteger SEQUENCIA = new AtomicInteger(1);
+
     // Código único gerado automaticamente para identificar o livro no sistema.
     private String codigo;
     // Texto descritivo usado para identificar o registro de forma mais clara.
     private String identificacao;
 
     /**
-     * Gera um código aleatório para o livro.
+     * Gera um código sequencial para o livro.
      *
-     * <p>O padrão usa o prefixo LIV- seguido de um número aleatório de 4 dígitos.
-     * Essa estratégia simples permite identificar cada obra sem banco de dados.</p>
+     * <p>O padrão usa o prefixo LIV- seguido de um número sequencial com pelo menos
+     * 4 dígitos (LIV-0001, LIV-0002...). Antes o número era aleatório entre 1000 e
+     * 9999, o que permitia dois livros com o mesmo código — e
+     * {@code Catalogo.buscarPorCodigo} devolvia só o primeiro.</p>
      */
     public CodigoLivro() {
-        this.codigo = "LIV-" + ((int) (Math.random() * 9000) + 1000);
+        this.codigo = String.format("LIV-%04d", SEQUENCIA.getAndIncrement());
         this.identificacao = "Registro interno da biblioteca";
     }
 

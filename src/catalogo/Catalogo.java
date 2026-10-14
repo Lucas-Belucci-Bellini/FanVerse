@@ -135,11 +135,15 @@ public class Catalogo {
      *
      * @param nomeColecao texto usado na busca
      * @return lista com os livros correspondentes
+     * @throws IllegalArgumentException se o texto for nulo ou vazio
      */
     public List<Livro> listarLivrosPorColecao(String nomeColecao) {
+        if (nomeColecao == null || nomeColecao.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome da coleção inválido para busca.");
+        }
         List<Livro> livrosDaColecao = new ArrayList<>();
         for (Livro livro : livros) {
-            if (livro.getTitulo().toLowerCase().contains(nomeColecao.toLowerCase())) {
+            if (livro.getTitulo().toLowerCase().contains(nomeColecao.trim().toLowerCase())) {
                 livrosDaColecao.add(livro);
             }
         }
